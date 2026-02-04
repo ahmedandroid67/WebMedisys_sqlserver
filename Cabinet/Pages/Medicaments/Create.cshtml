@@ -1,0 +1,79 @@
+﻿@page
+@model Cabinet.Pages.Medicaments.CreateModel
+@{
+    ViewData["Title"] = "Nouveau Médicament";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4><i class="bi bi-capsule"></i> Ajouter un Médicament</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+
+                    <div class="alert alert-info py-2">
+                        <small><i class="bi bi-info-circle"></i> L'identifiant (ID) doit être unique (ex: Code Barre ou ID interne).</small>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">ID Unique</label>
+                            <input asp-for="Medicament.Id" class="form-control" type="number" required />
+                            <span asp-validation-for="Medicament.Id" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Code (Barre/Ref)</label>
+                            <input asp-for="Medicament.Code" class="form-control" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Forme (Comprimé, Sirop...)</label>
+                            <input asp-for="Medicament.Forme" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nom Commercial</label>
+                        <input asp-for="Medicament.Nom" class="form-control" required />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">DCI / Molécule</label>
+                            <input asp-for="Medicament.Dci1" class="form-control" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Dosage</label>
+                            <input asp-for="Medicament.Dosage1" class="form-control" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Unité</label>
+                            <input asp-for="Medicament.UniteDosage1" class="form-control" placeholder="mg, ml..." />
+                        </div>
+                    </div>
+
+                    <div class="row bg-light p-3 rounded mb-3 border">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label text-success fw-bold">Prix Vente (PPV)</label>
+                            <input asp-for="Medicament.Ppv" class="form-control" type="number" step="0.01" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Prix Base (PRIX_BR)</label>
+                            <input asp-for="Medicament.PrixBr" class="form-control" type="number" step="0.01" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Taux Remboursement</label>
+                            <input asp-for="Medicament.TauxRemboursement" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-page="Index" class="btn btn-secondary me-md-2">Annuler</a>
+                        <button type="submit" class="btn btn-success">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

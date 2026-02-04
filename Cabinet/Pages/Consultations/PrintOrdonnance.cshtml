@@ -1,0 +1,128 @@
+﻿@page "{id:int}"
+@model Cabinet.Pages.Consultations.PrintOrdonnanceModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ordonnance - @Model.Consultation.Patient?.Nom</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            background: #fff;
+            font-family: 'Times New Roman', serif;
+            color: #000;
+        }
+
+        .prescription-container {
+            width: 148mm;
+            min-height: 210mm;
+            padding: 15mm;
+            margin: auto;
+            border: 1px solid #eee;
+            position: relative;
+        }
+
+        .header-box {
+            border-bottom: 2px solid #000;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+        }
+
+            .header-box h2 {
+                font-weight: bold;
+                text-transform: uppercase;
+                margin-bottom: 5px;
+            }
+
+        .med-item {
+            margin-bottom: 18px;
+        }
+
+        .med-name {
+            font-weight: bold;
+            font-size: 1.15rem;
+            text-transform: uppercase;
+        }
+
+        .posology {
+            font-style: italic;
+            margin-left: 25px;
+            font-size: 1rem;
+            color: #222;
+        }
+
+        @@media print {
+            .no-print {
+                display: none !important;
+            }
+
+            .prescription-container {
+                border: none;
+                padding: 0;
+            }
+
+            @@page {
+                size: A5;
+                margin: 10mm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print p-3 bg-dark text-white d-flex justify-content-between align-items-center">
+        <div class="small fw-bold text-uppercase tracking-wider">Aperçu de l'ordonnance</div>
+        <button onclick="window.print()" class="btn btn-primary btn-sm px-4 rounded-pill fw-bold">
+            <i class="bi bi-printer-fill me-2"></i>Imprimer / PDF
+        </button>
+    </div>
+
+    <div class="prescription-container">
+        <div class="header-box text-center">
+            <h2>@Model.Cabinet.DrName</h2>
+            <p class="mb-1"><strong>@Model.Cabinet.Speciality</strong></p>
+            <p class="small mb-0">
+                @Model.Cabinet.Address <br />
+                @if (!string.IsNullOrEmpty(Model.Cabinet.Phone))
+                {
+                    <span>Tél: @Model.Cabinet.Phone</span>
+                }
+                @if (!string.IsNullOrEmpty(Model.Cabinet.Email))
+                {
+                    <span> | @Model.Cabinet.Email</span>
+                }
+            </p>
+        </div>
+
+        <div class="d-flex justify-content-between mb-5 px-2">
+            <div><strong>Patient:</strong> <span class="text-uppercase">@Model.Consultation.Patient?.Nom @Model.Consultation.Patient?.Prenom</span></div>
+            <div><strong>Fait à Larache, le:</strong> @Model.Consultation.DateConsultation?.ToString("dd/MM/yyyy")</div>
+        </div>
+
+        <h3 class="text-center mb-5" style="text-decoration: underline; letter-spacing: 2px;">ORDONNANCE</h3>
+
+        <div class="prescription-content px-3">
+            @if (Model.Prescriptions.Any())
+            {
+                @foreach (var med in Model.Prescriptions)
+                {
+                    <div class="med-item">
+                        <div class="med-name">- @med.Nom @med.Dosage1 @med.UniteDosage1</div>
+                        <div class="posology">@med.Quantite</div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-center text-muted italic">Aucun médicament prescrit.</p>
+            }
+        </div>
+
+        <div style="position: absolute; bottom: 40mm; right: 20mm; text-align: center;">
+            <p class="mb-5"><strong>Signature & Cachet</strong></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,186 @@
+﻿@page
+@model Cabinet.Pages.Consultations.CreateModel
+@{
+    ViewData["Title"] = "Nouvelle Consultation";
+}
+
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+}
+
+<div class="container-fluid">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+            <div asp-validation-summary="All" class="small"></div>
+        </div>
+    }
+
+    <form method="post">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-person-badge"></i> Réception</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Date de Consultation</label>
+                            <input asp-for="Consultation.DateConsultation"
+                                   class="form-control"
+                                   type="datetime-local"
+                                   asp-format="{0:yyyy-MM-ddTHH:mm}"
+                                   required />
+                            <small class="text-muted">Par défaut : Maintenant. Modifiable si besoin.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Patient</label>
+                            <select asp-for="Consultation.PatientId" asp-items="Model.PatientList" class="form-select select2-patient" required>
+                                <option value="">-- Rechercher Patient --</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-primary">Service / Acte Médical</label>
+                            <select id="serviceSelect" asp-items="Model.ServiceList" class="form-select">
+                                <option value="0">-- Choisir un service --</option>
+                            </select>
+                            <small class="text-muted">Sélectionner un acte pour remplir le prix total.</small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-bold">Total (DH)</label>
+                                <input asp-for="Consultation.PrixConsul" id="totalPrix" class="form-control text-success fw-bold bg-light" type="number" step="0.01" readonly />
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label fw-bold">Remise (DH)</label>
+                                <input asp-for="Consultation.Remise" id="remise" class="form-control text-danger border-danger" type="number" step="0.01" value="0" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Mutuelle Remplie</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" asp-for="Consultation.MutRemplie">
+                                <label class="form-check-label">Oui</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-light">
+                        <ul class="nav nav-tabs card-header-tabs" id="medicalTabs" role="tablist">
+                            <li class="nav-item">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#remarques" type="button">Remarques</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#parametres" type="button">Paramètres Vitaux</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body tab-content">
+                        <div class="tab-pane fade show active" id="remarques">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Signes Cliniques</label>
+                                <textarea asp-for="Consultation.Signe" class="form-control" rows="3" placeholder="Symptômes constatés..."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Diagnostic</label>
+                                <textarea asp-for="Consultation.Diagnostique" class="form-control" rows="3" placeholder="Diagnostic médical..."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Conduite à tenir</label>
+                                <textarea asp-for="Consultation.Conduite" class="form-control" rows="3" placeholder="Instructions ou conseils..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="parametres">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Tension</label>
+                                    <input asp-for="Consultation.TTension" class="form-control" placeholder="12/8" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Glycémie</label>
+                                    <input asp-for="Consultation.TGly" class="form-control" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Température (°C)</label>
+                                    <input asp-for="Consultation.TTemp" class="form-control" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Poids (Kg)</label>
+                                    <input asp-for="Consultation.TPoid" id="poids" class="form-control" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Taille (cm)</label>
+                                    <input asp-for="Consultation.TTaille" id="taille" class="form-control" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold text-danger">IMC</label>
+                                    <input asp-for="Consultation.TImc" id="imc" class="form-control bg-light" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-end gap-2">
+                        <a asp-page="Index" class="btn btn-secondary">Annuler</a>
+                        <button type="submit" class="btn btn-success px-5">Enregistrer Consultation</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('.select2-patient').select2({
+                theme: 'bootstrap-5',
+                placeholder: '-- Rechercher un Patient --',
+                width: '100%'
+            });
+
+            $('#serviceSelect').on('change', function() {
+                let price = $(this).val();
+                if (price && price != "0") {
+                    $('#totalPrix').val(parseFloat(price).toFixed(2));
+                } else {
+                    $('#totalPrix').val("");
+                }
+            });
+
+            $('#poids, #taille').on('input', function() {
+                let p = parseFloat($('#poids').val());
+                let t = parseFloat($('#taille').val()) / 100;
+                if (p > 0 && t > 0) {
+                    let result = p / (t * t);
+                    $('#imc').val(result.toFixed(2));
+                }
+            });
+
+            $('#remise').on('input', function() {
+                let total = parseFloat($('#totalPrix').val()) || 0;
+                let remise = parseFloat($(this).val()) || 0;
+                if (remise > total) {
+                    alert("La remise ne peut pas être supérieure au prix total.");
+                    $(this).val(0);
+                }
+            });
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

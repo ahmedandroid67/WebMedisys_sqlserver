@@ -1,0 +1,29 @@
+﻿@model int
+
+@if (Model > 0)
+{
+    <span class="badge rounded-pill bg-danger ms-1 shadow-sm animate-pulse">
+        @Model
+    </span>
+}
+
+<style>
+    /* Subtle pulse animation to draw attention to stock alerts */
+    .animate-pulse {
+        animation: pulse-red 2s infinite;
+    }
+
+    @@keyframes pulse-red {
+        0% {
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+        }
+
+        70% {
+            box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+        }
+    }
+</style>

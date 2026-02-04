@@ -1,0 +1,479 @@
+﻿@page
+@model Cabinet.Pages.Stock.HistoryModel
+@{
+    ViewData["Title"] = "Historique des Mouvements";
+}
+
+@section Styles {
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .page-header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 300px;
+                height: 300px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 50%;
+                transform: translate(30%, -30%);
+            }
+
+        .page-header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-icon-wrapper {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            margin-bottom: 1rem;
+        }
+
+            .header-icon-wrapper i {
+                color: white;
+                font-size: 2rem;
+            }
+
+        .page-header h1 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 0.65rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+            .btn-back:hover {
+                background: white;
+                color: #667eea;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+            }
+
+        /* Filter Card */
+        .filter-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-select,
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            padding: 0.65rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+            .form-select:focus,
+            .form-control:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+
+        .btn-filter {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 0.65rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+            .btn-filter:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            }
+
+        .btn-reset {
+            background: #f1f5f9;
+            border: 2px solid #e2e8f0;
+            color: #64748b;
+            padding: 0.65rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+            .btn-reset:hover {
+                background: #e2e8f0;
+                color: #475569;
+            }
+
+        /* Table Card */
+        .table-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #e2e8f0;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+            .table thead th {
+                background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+                border-bottom: 2px solid #e2e8f0;
+                color: #475569;
+                font-size: 0.75rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                padding: 1rem 1.25rem;
+                white-space: nowrap;
+            }
+
+            .table tbody tr {
+                transition: all 0.2s ease;
+                border-bottom: 1px solid #f1f5f9;
+            }
+
+                .table tbody tr:hover {
+                    background: #f8fafc;
+                    transform: scale(1.01);
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+                }
+
+            .table tbody td {
+                padding: 1rem 1.25rem;
+                vertical-align: middle;
+                font-size: 0.95rem;
+            }
+
+        /* Date Column */
+        .date-cell {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+            .date-cell i {
+                color: #94a3b8;
+                margin-right: 0.5rem;
+            }
+
+        /* Product Column */
+        .product-cell {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1rem;
+        }
+
+        /* Quantity Column */
+        .quantity-cell {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #334155;
+        }
+
+        /* Operation Badges */
+        .badge-operation {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .badge-entry {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            border: 2px solid #6ee7b7;
+        }
+
+            .badge-entry i {
+                color: #059669;
+            }
+
+        .badge-exit {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            border: 2px solid #fca5a5;
+        }
+
+            .badge-exit i {
+                color: #dc2626;
+            }
+
+        .badge-operation:hover {
+            transform: scale(1.05);
+        }
+
+        /* Responsible Column */
+        .responsible-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .responsible-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .responsible-name {
+            font-weight: 600;
+            color: #334155;
+            line-height: 1.3;
+        }
+
+        /* Motif Column */
+        .motif-cell {
+            color: #64748b;
+            font-size: 0.9rem;
+            max-width: 250px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+            .empty-state i {
+                font-size: 4rem;
+                color: #cbd5e1;
+                margin-bottom: 1rem;
+            }
+
+            .empty-state h3 {
+                color: #64748b;
+                font-size: 1.25rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .empty-state p {
+                color: #94a3b8;
+            }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .page-header {
+                padding: 1.5rem;
+            }
+
+                .page-header h1 {
+                    font-size: 1.5rem;
+                }
+
+            .table-card {
+                overflow-x: auto;
+            }
+
+            .responsible-cell {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+}
+
+<div class="container-fluid px-4">
+    <!-- Page Header -->
+    <div class="page-header mt-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; padding: 1.5rem 2rem; border: none;">
+        <div class="page-header-content">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="header-icon-wrapper me-3" style="background: rgba(255, 255, 255, 0.2); width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-clock-rotate-left" style="color: white; font-size: 1.8rem;"></i>
+                    </div>
+                    <div>
+                        <h1 class="h3 mb-0 fw-bold text-white" style="font-size: 2rem; letter-spacing: -0.5px;">
+                            Historique des Mouvements
+                        </h1>
+                        <p class="text-white-50 small mb-0" style="font-size: 0.95rem; opacity: 0.85;">
+                            Suivi complet des entrées et sorties de matériel
+                        </p>
+                    </div>
+                </div>
+
+                <a asp-page="./Index" class="btn btn-outline-light rounded-pill px-4 fw-bold shadow-sm">
+                    <i class="fa-solid fa-arrow-left me-2"></i>Retour au Stock
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="filter-card">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="filter-label">
+                    <i class="fa-solid fa-box me-2"></i>Produit
+                </label>
+                <select asp-for="ProductFilter" asp-items="Model.ProductOptions" class="form-select">
+                    <option value="">Tous les produits</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="filter-label">
+                    <i class="fa-solid fa-filter me-2"></i>Type d'opération
+                </label>
+                <select asp-for="TypeFilter" class="form-select">
+                    <option value="">Tous</option>
+                    <option value="Entrée">Entrées (+)</option>
+                    <option value="Sortie">Sorties (-)</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-filter w-100">
+                    <i class="fa-solid fa-magnifying-glass me-2"></i>Filtrer
+                </button>
+            </div>
+            <div class="col-md-2">
+                <a asp-page="./History" class="btn btn-reset w-100">
+                    <i class="fa-solid fa-rotate-right me-2"></i>Reset
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Table Card -->
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            <i class="fa-solid fa-calendar me-2"></i>Date
+                        </th>
+                        <th>
+                            <i class="fa-solid fa-box me-2"></i>Produit
+                        </th>
+                        <th>
+                            <i class="fa-solid fa-hashtag me-2"></i>Quantité
+                        </th>
+                        <th>
+                            <i class="fa-solid fa-exchange-alt me-2"></i>Opération
+                        </th>
+                        <th>
+                            <i class="fa-solid fa-user me-2"></i>Responsable
+                        </th>
+                        <th>
+                            <i class="fa-solid fa-comment me-2"></i>Motif
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Movements.Any())
+                    {
+                        @foreach (var move in Model.Movements)
+                        {
+                            <tr>
+                                <td class="date-cell">
+                                    <i class="fa-solid fa-clock"></i>
+                                    @move.DateMouvement.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+                                <td class="product-cell">
+                                    @move.Stock?.Nom
+                                </td>
+                                <td class="quantity-cell">
+                                    @(Math.Abs(move.Quantite))
+                                </td>
+                                <td>
+                                    <span class="badge-operation @(move.Type == "Entrée" ? "badge-entry" : "badge-exit")">
+                                        <i class="fa-solid @(move.Type == "Entrée" ? "fa-arrow-down" : "fa-arrow-up")"></i>
+                                        @move.Type
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="responsible-cell">
+                                        <div class="responsible-avatar">
+                                            @(move.Employer?.Nom?.Substring(0, 1))@(move.Employer?.Prenom?.Substring(0, 1))
+                                        </div>
+                                        <span class="responsible-name">
+                                            @move.Employer?.Nom @move.Employer?.Prenom
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="motif-cell">
+                                    @move.Motif
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6">
+                                <div class="empty-state">
+                                    <i class="fa-solid fa-inbox"></i>
+                                    <h3>Aucun mouvement trouvé</h3>
+                                    <p>Il n'y a pas d'historique de mouvements pour le moment.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Cabinet</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Cabinet.styles.css" asp-append-version="true" />
+    <script src="~/js/theme.js" asp-append-version="true"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light navbar-bg1 border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand fw-bold text-primary" asp-area="" asp-page="/Index">
+                    <i class="fa-solid fa-house-medical"></i> Cabinet
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <a class="nav-link" style="color: var(--text-submenu) !important;" asp-page="/Index">
+                                <i class="fa-solid fa-gauge-high"></i> Dashboard
+                            </a>
+                            <li class="nav-item">
+                                <a class="nav-link" style="color: var(--text-submenu) !important;"  asp-page="/Consultations/Index">
+                                    <i class="fa-solid fa-file-waveform"></i> Consultations
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" style="color: var(--text-submenu) !important;"  asp-page="/Patients/Index">
+                                    <i class="fa-solid fa-hospital-user"></i> Patients
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" style="color: var(--text-submenu) !important;"  asp-page="/Rendezvous/Index">
+                                    <i class="fa-solid fa-hospital-user"></i> Rendez-Vous
+                                </a>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" style="color: var(--text-submenu) !important;"  href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-file-waveform"></i>
+                                    <span>Administration</span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-page="/Reports/Revenue">
+                                            <span style="color: var(--text-submenu);">
+                                                <i class="fa-solid fa-chart-line me-2"></i>Rapports Financiers
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-page="/Reports/Statistics">
+                                            <span style="color: var(--text-submenu);">
+                                                <i class="fa-solid fa-chart-pie me-2"></i>Statistiques Avancées
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-page="/Employers/Index">
+                                            <span style="color: var(--text-submenu);">
+                                                <i class="fa-solid fa-user-doctor me-2"></i>Staff
+                                            </span>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-page="/Medicaments/Index">
+                                            <span style="color: var(--text-submenu);">
+                                                <i class="fa-solid fa-pills"></i> Médicaments
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-page="/services/Index">
+                                            <span style="color: var(--text-submenu);">
+                                                <i class="fa-solid fa-hand-holding-medical"></i> Services
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString().Contains("/Stock") == true ? "active" : "")" asp-page="/Stock/Index">
+                                            <span style="color: var(--text-submenu);">
+                                                <i class="fa-solid fa-boxes-stacked me-2"></i> Gestion Stock
+                                            </span>
+
+                                            @await Component.InvokeAsync("LowStockCount")
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-page="/Settings/Cabinet">
+                                            <span style="color: var(--text-submenu);">
+                                                <i class="fa-solid fa-hand-holding-medical"></i> Infos Cabinet
+                                            </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+
+                    <ul class="navbar-nav">
+
+                        <li class="nav-item me-2">
+                            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" style="color: var(--text-submenu) !important;">
+                                <span class="theme-text-label light-text">Light</span>
+                                <span class="theme-text-label dark-text">Dark</span>
+                                <div class="toggle-slider">
+                                    <i class="fa-solid fa-sun toggle-icon sun-icon"></i>
+                                    <i class="fa-solid fa-moon toggle-icon moon-icon"></i>
+                                </div>
+                            </button>
+                        </li>
+
+
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            var fullName = User.FindFirst("FullName")?.Value ?? User.Identity.Name;
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle fw-bold" style="color: var(--text-submenu) !important;"  href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-user-doctor text-primary"></i> @fullName
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown">
+                                    <li>
+                                        <form method="post" asp-page="/Account/Logout">
+                                            <button type="submit" class="btn btn-danger">
+                                                <i class="fa-solid fa-right-from-bracket me-2"></i>Quitter
+                                            </button>
+                                        </form>
+
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-primary fw-bold" asp-page="/Account/Login">
+                                    <i class="fa-solid fa-right-to-bracket"></i> Se connecter
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-5">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted bg-white">
+        <div class="container text-center py-3">
+            &copy; 2026 - <a href="http://Laaraichi.com" target="_blank" rel="noopener noreferrer" class="text-decoration-none">Laaraichi.com</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

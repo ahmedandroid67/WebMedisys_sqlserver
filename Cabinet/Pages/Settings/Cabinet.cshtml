@@ -1,0 +1,83 @@
+﻿@page
+@model Cabinet.Pages.Administration.CabinetSettingsModel
+@{
+    ViewData["Title"] = "Paramètres du Cabinet";
+}
+
+<div class="container-fluid px-4">
+    <div class="page-header mt-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; padding: 1.5rem 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        <div class="d-flex align-items-center">
+            <div class="header-icon-wrapper me-3" style="background: rgba(255,255,255,0.2); width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-hospital-user text-white" style="font-size: 1.8rem;"></i>
+            </div>
+            <div>
+                <h1 class="h3 mb-0 fw-bold text-white">Profil du Cabinet</h1>
+                <p class="text-white-50 small mb-0">Ces informations apparaîtront sur vos ordonnances et rapports</p>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success mt-3 rounded-3 shadow-sm border-0">
+            <i class="fa-solid fa-circle-check me-2"></i> @TempData["Success"]
+        </div>
+    }
+
+    <div class="card shadow-md border-0 rounded-3 mt-4">
+        <div class="card-body p-4">
+            <form method="post">
+                <input type="hidden" asp-for="Info.Id" />
+
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-secondary small">Nom du Docteur</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-user-md text-primary"></i></span>
+                            <input asp-for="Info.DrName" class="form-control border-start-0" placeholder="ex: DR. LAARAICHI Ahmed" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-secondary small">Spécialité</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-stethoscope text-primary"></i></span>
+                            <input asp-for="Info.Speciality" class="form-control border-start-0" placeholder="ex: Médecine Générale" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-secondary small">Numéro de Téléphone</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-phone text-primary"></i></span>
+                            <input asp-for="Info.Phone" class="form-control border-start-0" placeholder="05XXXXXXXX" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold text-secondary small">Email Professionnel</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-envelope text-primary"></i></span>
+                            <input asp-for="Info.Email" type="email" class="form-control border-start-0" placeholder="contact@cabinet.ma" />
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold text-secondary small">Adresse du Cabinet</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-location-dot text-primary"></i></span>
+                            <textarea asp-for="Info.Address" class="form-control border-start-0" rows="2" placeholder="Adresse complète..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-end">
+                        <hr class="my-4 opacity-50">
+                        <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow-sm">
+                            <i class="fa-solid fa-floppy-disk me-2"></i>Enregistrer les Informations
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

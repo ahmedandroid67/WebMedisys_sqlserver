@@ -1,0 +1,54 @@
+﻿@page
+@model Cabinet.Pages.Stock.CreateModel
+@{
+    ViewData["Title"] = "Nouveau Produit";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-lg border-0 rounded-3">
+            <div class="card-header bg-primary text-white py-3">
+                <h4 class="mb-0"><i class="fa-solid fa-box-open me-2"></i> Nouveau Produit de Stock</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nom du Produit *</label>
+                        <input asp-for="NewStock.Nom" class="form-control" required />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Catégorie *</label>
+                            <select asp-for="NewStock.CategoryId" class="form-select" required>
+                                <option value="">-- Choisir --</option>
+                                @foreach (var cat in Model.CategoryOptions)
+                                {
+                                    <option value="@cat.Id">@cat.Nom</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Quantité Initiale</label>
+                            <input asp-for="NewStock.Quantite" type="number" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-danger fw-bold">Seuil d'Alerte</label>
+                            <input asp-for="NewStock.Alarme" type="number" class="form-control" />
+                            <small class="text-muted">Alerte quand le stock est inférieur à ce chiffre.</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Observation</label>
+                            <input asp-for="NewStock.Observation" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-page="Index" class="btn btn-outline-secondary px-4 rounded-pill">Annuler</a>
+                        <button type="submit" class="btn btn-success px-5 rounded-pill shadow-sm">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

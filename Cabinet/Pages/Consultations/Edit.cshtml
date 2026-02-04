@@ -1,0 +1,244 @@
+﻿@page "{id:int}"
+@model Cabinet.Pages.Consultations.EditModel
+@{
+    ViewData["Title"] = "Modifier Consultation";
+}
+
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+    <style>
+        .history-row:hover {
+            background-color: rgba(13, 110, 253, 0.05);
+            cursor: pointer;
+        }
+
+        .selected-history {
+            border-left: 4px solid #0d6efd !important;
+            background-color: rgba(13, 110, 253, 0.1) !important;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <form method="post" id="editForm">
+        <input type="hidden" asp-for="Consultation.IdConsultation" />
+        <input type="hidden" asp-for="Consultation.PatientId" />
+        <input type="hidden" asp-for="Consultation.DateConsultation" />
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <h4>Patient: <span class="text-primary">@Model.Consultation.Patient?.Nom @Model.Consultation.Patient?.Prenom</span></h4>
+            </div>
+            <div class="col-md-6 text-end">
+                <a asp-page="./Index" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-list"></i> Liste
+                </a>
+                <select asp-for="Consultation.Etat" class="form-select d-inline-block w-auto">
+                    <option value="Reception">Réception</option>
+                    <option value="Visite">En Visite</option>
+                    <option value="Terminer">Terminer</option>
+                </select>
+                
+                <!-- Print Documents Dropdown -->
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-printer"></i> Imprimer Documents
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" asp-page="./PrintOrdonnance" asp-route-id="@Model.Consultation.IdConsultation" target="_blank">
+                                <i class="bi bi-file-medical text-danger"></i> Ordonnance Médicale
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" asp-page="./PrintCertificatMedical" asp-route-id="@Model.Consultation.IdConsultation" target="_blank">
+                                <i class="bi bi-file-earmark-text text-primary"></i> Certificat Médical
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-page="./PrintArretTravail" asp-route-id="@Model.Consultation.IdConsultation" target="_blank">
+                                <i class="bi bi-file-earmark-break text-warning"></i> Arrêt de Travail (CNSS)
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" asp-page="./PrintRecu" asp-route-id="@Model.Consultation.IdConsultation" target="_blank">
+                                <i class="bi bi-receipt text-success"></i> Reçu de Paiement
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <button type="submit" class="btn btn-success px-4">Enregistrer</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card shadow-sm mb-3">
+                    <div class="card-header bg-primary text-white py-1">Facturation</div>
+                    <div class="card-body py-2">
+                        <div class="mb-2">
+                            <label class="form-label small fw-bold">Service / Acte</label>
+                            <select id="serviceSelect" asp-items="Model.ServiceList" class="form-select form-select-sm">
+                                <option value="0">-- Mettre à jour acte --</option>
+                            </select>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-label small fw-bold">Total (DH)</label>
+                                <input asp-for="Consultation.PrixConsul" id="totalPrix" class="form-control form-control-sm text-success fw-bold bg-light" readonly />
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-bold">Remise (DH) </label>
+                                <input asp-for="Consultation.Remise" id="remise" class="form-control form-control-sm text-danger" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-dark text-white py-1 small fw-bold">Historique des Visites</div>
+                    <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-sm table-hover mb-0" id="historyTable">
+                            <tbody>
+                                @foreach (var h in Model.PatientHistory)
+                                {
+                                    <tr class="history-row border-bottom" data-id="@h.IdConsultation">
+                                        <td class="ps-3 py-2">
+                                            <div class="fw-bold small text-dark">@h.DateConsultation?.ToString("dd/MM/yyyy")</div>
+                                            <div class="text-muted" style="font-size: 0.75rem;">@h.Service</div>
+                                        </td>
+                                        <td class="text-end pe-3 align-middle">
+                                            <i class="bi bi-chevron-right text-muted"></i>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#notes" type="button">Notes</button></li>
+                            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#vitals" type="button">Paramètres</button></li>
+                            <li class="nav-item"><button class="nav-link text-danger fw-bold" data-bs-toggle="tab" data-bs-target="#ordTab" type="button">Ordonnance</button></li>
+                        </ul>
+                    </div>
+                    <div class="card-body tab-content">
+                        <div class="tab-pane fade show active" id="notes">
+                            <textarea asp-for="Consultation.Signe" class="form-control mb-2" rows="3" placeholder="Signes..."></textarea>
+                            <textarea asp-for="Consultation.Diagnostique" class="form-control mb-2" rows="3" placeholder="Diagnostic..."></textarea>
+                            <textarea asp-for="Consultation.Conduite" class="form-control" rows="3" placeholder="Conduite..."></textarea>
+                        </div>
+                        <div class="tab-pane fade" id="vitals">
+                            <div class="row g-2">
+                                <div class="col-6"><input asp-for="Consultation.TTension" class="form-control" placeholder="Tension" /></div>
+                                <div class="col-6"><input asp-for="Consultation.TGly" class="form-control" placeholder="Glycémie" /></div>
+                                <div class="col-4"><input asp-for="Consultation.TPoid" id="poids" class="form-control" placeholder="Poids" /></div>
+                                <div class="col-4"><input asp-for="Consultation.TTaille" id="taille" class="form-control" placeholder="Taille" /></div>
+                                <div class="col-4"><input asp-for="Consultation.TImc" id="imc" class="form-control bg-light" readonly placeholder="IMC" /></div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="ordTab">
+                            <div class="row g-2 mb-2">
+                                <div class="col-md-7">
+                                    <select id="medSelect" asp-items="Model.MedicamentList" class="form-select select2-med">
+                                        <option value="">-- Médicament --</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3"><input type="text" id="posoInput" class="form-control" placeholder="Posologie" /></div>
+                                <div class="col-md-2 d-grid"><button type="button" id="btnAddMed" class="btn btn-primary btn-sm">Ok</button></div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered mt-2" id="ordTable">
+                                    <thead class="table-light">
+                                        <tr><th>Médicament</th><th>Posologie</th><th width="40"></th></tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.ExistingPrescriptions)
+                                        {
+                                            <tr>
+                                                <td>@item.Nom<input type="hidden" name="medIds[]" value="@item.Code" /></td>
+                                                <td>@item.Quantite<input type="hidden" name="posos[]" value="@item.Quantite" /></td>
+                                                <td class="text-center"><button type="button" class="btn btn-sm text-danger remove-row"><i class="bi bi-trash"></i></button></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.select2-med').select2({ theme: 'bootstrap-5', width: '100%' });
+
+            // History Loading AJAX
+            $('.history-row').click(function() {
+                const id = $(this).data('id');
+                $('.history-row').removeClass('selected-history');
+                $(this).addClass('selected-history');
+
+                $.getJSON(`?handler=HistoryDetails&id=${id}`, function(data) {
+                    // Fill Notes
+                    $('#Consultation_Signe').val(data.history.signe);
+                    $('#Consultation_Diagnostique').val(data.history.diagnostique);
+                    $('#Consultation_Conduite').val(data.history.conduite);
+
+                    // Fill Vitals
+                    $('#Consultation_TTension').val(data.history.tTension);
+                    $('#Consultation_TGly').val(data.history.tGly);
+                    $('#poids').val(data.history.tPoid);
+                    $('#taille').val(data.history.tTaille);
+                    $('#imc').val(data.history.tImc);
+
+                    // Clear and Fill Ordonnance
+                    $('#ordTable tbody').empty();
+                    data.meds.forEach(m => {
+                        $('#ordTable tbody').append(`
+                            <tr>
+                                <td>${m.nom}<input type="hidden" name="medIds[]" value="${m.code}" /></td>
+                                <td>${m.quantite}<input type="hidden" name="posos[]" value="${m.quantite}" /></td>
+                                <td class="text-center"><button type="button" class="btn btn-sm text-danger remove-row"><i class="bi bi-trash"></i></button></td>
+                            </tr>
+                        `);
+                    });
+                });
+            });
+
+            // Prescription logic
+            $('#btnAddMed').click(function() {
+                let id = $('#medSelect').val(), name = $("#medSelect option:selected").text(), poso = $('#posoInput').val();
+                if(!id || !poso) return;
+                $('#ordTable tbody').append(`<tr><td>${name}<input type="hidden" name="medIds[]" value="${id}" /></td><td>${poso}<input type="hidden" name="posos[]" value="${poso}" /></td><td class="text-center"><button type="button" class="btn btn-sm text-danger remove-row"><i class="bi bi-trash"></i></button></td></tr>`);
+                $('#posoInput').val(''); $('#medSelect').val('').trigger('change');
+            });
+            $(document).on('click', '.remove-row', function() { $(this).closest('tr').remove(); });
+
+            // IMC and Service logic remains same...
+            $('#serviceSelect').on('change', function() {
+                let price = $(this).val();
+                if (price && price != "0") $('#totalPrix').val(parseFloat(price).toFixed(2));
+            });
+            $('#poids, #taille').on('input', function() {
+                let p = parseFloat($('#poids').val()), t = parseFloat($('#taille').val()) / 100;
+                if (p > 0 && t > 0) $('#imc').val((p / (t * t)).toFixed(2));
+            });
+        });
+    </script>
+}

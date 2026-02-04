@@ -1,0 +1,247 @@
+@page "{id:int}"
+@model Cabinet.Pages.Consultations.PrintRecuModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <title>Reçu de Paiement - @Model.Consultation.Patient?.Nom</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        @@page {
+            size: A5 landscape;
+            margin: 10mm;
+        }
+
+        body {
+            background: #fff;
+            font-family: 'Arial', sans-serif;
+            color: #000;
+            font-size: 12pt;
+        }
+
+        .receipt-container {
+            width: 190mm;
+            min-height: 130mm;
+            padding: 15mm;
+            margin: auto;
+            border: 3px double #000;
+            position: relative;
+        }
+
+        .header-section {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .receipt-title {
+            font-size: 22pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 10px 0;
+        }
+
+        .receipt-number {
+            font-size: 11pt;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            padding: 10px;
+            background: #f9f9f9;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .info-value {
+            color: #000;
+        }
+
+        .amount-section {
+            margin: 25px 0;
+            padding: 20px;
+            background: #e8f4f8;
+            border: 2px solid #0066cc;
+            text-align: center;
+        }
+
+        .amount-label {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .amount-value {
+            font-size: 24pt;
+            font-weight: bold;
+            color: #0066cc;
+            margin: 10px 0;
+        }
+
+        .payment-details {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #0066cc;
+        }
+
+        .footer-section {
+            margin-top: 30px;
+            text-align: right;
+        }
+
+        .signature-area {
+            display: inline-block;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .signature-line {
+            width: 200px;
+            border-top: 2px solid #000;
+            margin-top: 50px;
+            padding-top: 5px;
+        }
+
+        @@media print {
+            .no-print {
+                display: none !important;
+            }
+
+            .receipt-container {
+                border: 3px double #000;
+            }
+
+            body {
+                margin: 0;
+            }
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 60pt;
+            color: rgba(0, 102, 204, 0.05);
+            font-weight: bold;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print p-3 bg-dark text-white d-flex justify-content-between align-items-center">
+        <div class="small fw-bold text-uppercase">Aperçu du Reçu de Paiement</div>
+        <button onclick="window.print()" class="btn btn-primary btn-sm px-4 rounded-pill fw-bold">
+            <i class="bi bi-printer-fill me-2"></i>Imprimer / PDF
+        </button>
+    </div>
+
+    <div class="receipt-container">
+        <div class="watermark">PAYÉ</div>
+
+        <!-- Header -->
+        <div class="header-section">
+            <div style="font-size: 14pt; font-weight: bold;">@Model.Cabinet.DrName</div>
+            @if (!string.IsNullOrEmpty(Model.Cabinet.Speciality))
+            {
+                <div style="font-size: 11pt;">@Model.Cabinet.Speciality</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Cabinet.Address))
+            {
+                <div style="font-size: 10pt; margin-top: 5px;">@Model.Cabinet.Address</div>
+            }
+            @if (!string.IsNullOrEmpty(Model.Cabinet.Phone))
+            {
+                <div style="font-size: 10pt;">Tél: @Model.Cabinet.Phone</div>
+            }
+            
+            <div class="receipt-title">Reçu de Paiement</div>
+            <div class="receipt-number">N° @Model.ReceiptNumber</div>
+        </div>
+
+        <!-- Patient Information -->
+        <div class="info-row">
+            <div>
+                <span class="info-label">Reçu de :</span>
+                <span class="info-value">@Model.Consultation.Patient?.Nom @Model.Consultation.Patient?.Prenom</span>
+            </div>
+            <div>
+                <span class="info-label">Date :</span>
+                <span class="info-value">@Model.Consultation.PaymentDate?.ToString("dd/MM/yyyy")</span>
+            </div>
+        </div>
+
+        <!-- Service Description -->
+        <div class="payment-details">
+            <div class="mb-2">
+                <span class="info-label">Pour :</span>
+                <span class="info-value">
+                    @if (!string.IsNullOrEmpty(Model.Consultation.Service))
+                    {
+                        @Model.Consultation.Service
+                    }
+                    else
+                    {
+                        <span>Consultation médicale</span>
+                    }
+                </span>
+            </div>
+            <div class="mb-2">
+                <span class="info-label">Date de consultation :</span>
+                <span class="info-value">@Model.Consultation.DateConsultation?.ToString("dd/MM/yyyy")</span>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Consultation.PaymentMethod))
+            {
+                <div>
+                    <span class="info-label">Mode de paiement :</span>
+                    <span class="info-value">@Model.Consultation.PaymentMethod</span>
+                </div>
+            }
+        </div>
+
+        <!-- Amount Section -->
+        <div class="amount-section">
+            <div class="amount-label">Montant Payé</div>
+            <div class="amount-value">
+                @{
+                    var montant = (Model.Consultation.PrixConsul ?? 0) - (Model.Consultation.Remise ?? 0);
+                }
+                @montant.ToString("N2") DH
+            </div>
+            @if (Model.Consultation.Remise > 0)
+            {
+                <div style="font-size: 10pt; color: #666;">
+                    (Prix: @Model.Consultation.PrixConsul DH - Remise: @Model.Consultation.Remise DH)
+                </div>
+            }
+        </div>
+
+        <!-- Footer with Signature -->
+        <div class="footer-section">
+            <div class="signature-area">
+                <div style="font-weight: bold; margin-bottom: 10px;">Signature et Cachet</div>
+                <div class="signature-line">
+                    @Model.Cabinet.DrName
+                </div>
+            </div>
+        </div>
+
+        <!-- Small Print -->
+        <div style="position: absolute; bottom: 10px; left: 15mm; font-size: 8pt; color: #999;">
+            Ce reçu est valable pour toute réclamation auprès de votre assurance ou employeur.
+        </div>
+    </div>
+</body>
+</html>

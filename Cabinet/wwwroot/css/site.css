@@ -1,0 +1,404 @@
+/* ============================================
+   BASE STYLES
+   ============================================ */
+html {
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+body {
+    margin-bottom: 100px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ============================================
+   LIGHT THEME VARIABLES
+   ============================================ */
+:root {
+    --primary-color: #0d6efd;
+    --primary-dark: #0b5ed7;
+    --primary-light: #6ea8fe;
+    /* Backgrounds */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #e9ecef;
+    /* Text */
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --text-muted: #adb5bd;
+    --text-submenu: #2A2D30;
+    /* Borders */
+    --border-color: #dee2e6;
+    /* Interaction */
+    --hover-bg: #f1f3f5;
+    --hover-strong-bg: #e7f1ff;
+    --active-bg: #dbe7ff;
+    /* Dropdown */
+    --dropdown-bg: #ffffff;
+    --dropdown-hover-bg: #f1f3f5;
+    --dropdown-text: #212529;
+    --dropdown-muted: #6c757d;
+    /* Components */
+    --card-bg: #ffffff;
+    --navbar-bg: #ffffff;
+    --footer-bg: #ffffff;
+    --navbar-bg1: #ffffff;
+    /* Input */
+    --input-bg: #ffffff;
+    --input-border: #dee2e6;
+    --input-text: #212529;
+    /* Shadow */
+    --shadow-sm: 0 2px 4px rgba(0,0,0,.04);
+    --shadow-md: 0 6px 16px rgba(0,0,0,.08);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,.12);
+}
+
+
+/* ============================================
+   DARK THEME VARIABLES
+   ============================================ */
+[data-theme="dark"] {
+    --primary-color: #6ea8fe;
+    --primary-dark: #9ec5fe;
+    --primary-light: #4a9aff;
+    --bg-primary: #464B59;
+    --bg-secondary: #23262f;
+    --bg-tertiary: #2c2f38;
+    --text-primary: #e8eaed;
+    --text-secondary: #b3b5ba;
+    --text-muted: #8a8d93;
+    --text-submenu: #C0CFDD;
+    --border-color: #3a3d45;
+    --hover-bg: #464B59;
+    --hover-strong-bg: #33363f;
+    --active-bg: rgba(110,168,254,0.2);
+    --dropdown-bg: #464B59;
+    --dropdown-hover-bg: #35383f;
+    --dropdown-text: #e8eaed;
+    --dropdown-muted: #b3b5ba;
+    --card-bg: #23262f;
+    --navbar-bg: #1a1d24;
+    --footer-bg: #1a1d24;
+    --input-bg: #23262f;
+    --input-border: #3a3d45;
+    --input-text: #e8eaed;
+    /* Components */
+    --card-bg: #333D4B;
+    --navbar-bg: #333D4B;
+    --navbar-bg1: #455481;
+    --footer-bg: #333D4B;
+    --shadow-sm: 0 2px 6px rgba(0,0,0,.4);
+    --shadow-md: 0 8px 24px rgba(0,0,0,.5);
+    --shadow-lg: 0 16px 40px rgba(0,0,0,.6);
+}
+
+
+
+
+/* ============================================
+   NAVBAR
+   ============================================ */
+.navbar {
+    background-color: var(--navbar-bg);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    padding: 0.75rem 0;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--primary-color) !important;
+}
+
+.navbar-nav .nav-link {
+    color: var(--text-primary);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+    .navbar-nav .nav-link:hover {
+        background-color: var(--hover-bg);
+        color: var(--primary-color);
+    }
+
+    .navbar-nav .nav-link.active {
+        background-color: var(--active-bg);
+        color: var(--primary-color);
+    }
+
+/* ============================================
+   DROPDOWN MENU (FULL FIX)
+   ============================================ */
+.dropdown-menu {
+    background-color: var(--dropdown-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    border-radius: 12px;
+    padding: 0.5rem;
+    min-width: 220px;
+    animation: dropdownFade 0.15s ease-out;
+}
+
+@keyframes dropdownFade {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-item {
+    color: var(--dropdown-text);
+    font-weight: 500;
+    padding: 0.6rem 0.9rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: all 0.2s ease;
+}
+
+    .dropdown-item i {
+        color: var(--dropdown-muted);
+        transition: color 0.2s ease;
+    }
+
+    .dropdown-item:hover {
+        background-color: var(--dropdown-hover-bg);
+        color: var(--primary-color);
+    }
+
+        .dropdown-item:hover i {
+            color: var(--primary-color);
+        }
+
+.dropdown-divider {
+    border-color: var(--border-color);
+    opacity: 0.6;
+}
+
+.dropdown-header {
+    color: var(--dropdown-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 0.75rem;
+}
+
+/* ============================================
+   USER DROPDOWN BUTTON
+   ============================================ */
+.user-dropdown .dropdown-toggle {
+    background-color: var(--hover-bg);
+    color: var(--primary-color);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+}
+
+    .user-dropdown .dropdown-toggle:hover {
+        background-color: var(--hover-strong-bg);
+    }
+
+/* ============================================
+   THEME TOGGLE BUTTON
+   ============================================ */
+.theme-toggle {
+    position: relative;
+    width: 70px;
+    height: 34px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 34px;
+    cursor: pointer;
+    padding: 0;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+    .theme-toggle:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .theme-toggle:active {
+        transform: translateY(0);
+    }
+
+[data-theme="dark"] .theme-toggle {
+    background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+    [data-theme="dark"] .theme-toggle:hover {
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+    }
+
+/* Toggle Slider */
+.toggle-slider {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 28px;
+    height: 28px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+[data-theme="dark"] .toggle-slider {
+    transform: translateX(36px);
+}
+
+/* Icons */
+.toggle-icon {
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.sun-icon {
+    color: #fbbf24;
+    opacity: 1;
+}
+
+.moon-icon {
+    color: #6366f1;
+    opacity: 0;
+    position: absolute;
+}
+
+[data-theme="dark"] .sun-icon {
+    opacity: 0;
+}
+
+[data-theme="dark"] .moon-icon {
+    opacity: 1;
+}
+
+/* Optional text labels */
+.theme-text-label {
+    position: absolute;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.light-text {
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.9);
+    opacity: 0;
+}
+
+.dark-text {
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.9);
+    opacity: 1;
+}
+
+[data-theme="dark"] .light-text {
+    opacity: 1;
+}
+
+[data-theme="dark"] .dark-text {
+    opacity: 0;
+}
+
+/* ============================================
+   CARDS
+   ============================================ */
+.card {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.card-header {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.footer {
+    background-color: var(--footer-bg);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+.shadow-sm-custom {
+    box-shadow: var(--shadow-sm);
+}
+
+.shadow-custom {
+    box-shadow: var(--shadow-md);
+}
+
+.rounded-custom {
+    border-radius: 8px;
+}
+
+.transition-all {
+    transition: all 0.2s ease;
+}
+
+
+
+
+
+
+
+
+/* Ensure the prescription table respects the theme text color */
+#ordTable {
+    color: var(--text-primary) !important;
+    background-color: transparent;
+}
+
+    #ordTable thead th {
+        color: var(--text-primary);
+        background-color: rgba(255, 255, 255, 0.05); /* Slight highlight for headers */
+        border-color: var(--border-color);
+    }
+
+    #ordTable tbody td {
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+
+    /* Fix for input hidden fields or placeholder text if they appear */
+    #ordTable input {
+        color: var(--input-text);
+    }

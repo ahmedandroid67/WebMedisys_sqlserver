@@ -1,0 +1,317 @@
+﻿@page
+@model Cabinet.Pages.Patients.IndexModel
+@{
+    ViewData["Title"] = "Gestion des Patients";
+}
+
+@section Styles {
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #4f46e5;
+            --info-color: #3b82f6;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(79, 70, 229, 0.1);
+        }
+
+        .header-icon-wrapper {
+            background: var(--primary-gradient);
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            margin-right: 1.5rem;
+        }
+
+            .header-icon-wrapper i {
+                color: white;
+                font-size: 2rem;
+            }
+
+        .btn-new-patient {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            text-decoration: none;
+        }
+
+            .btn-new-patient:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+                color: white;
+            }
+
+        .search-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid #e2e8f0;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+        }
+
+            .search-input-wrapper i {
+                position: absolute;
+                left: 1.2rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #94a3b8;
+                z-index: 10;
+            }
+
+        .search-input {
+            padding-left: 3rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            height: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-filter {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            border: none;
+            color: white;
+            height: 50px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #e2e8f0;
+        }
+
+        .table thead th {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: #475569;
+            padding: 1.2rem 1rem;
+            background: #f8fafc;
+            border: none;
+        }
+
+        .patient-avatar {
+            background: #eef2ff;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .patient-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1rem;
+        }
+
+        .badge-cin {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 2px solid #93c5fd;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .contact-link {
+            text-decoration: none;
+            color: #64748b;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+            .contact-link:hover {
+                color: var(--primary-color);
+            }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-action {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            border: 2px solid;
+            background: white;
+        }
+
+        .btn-edit {
+            color: #d97706;
+            border-color: #fcd34d;
+            background: #fef3c7;
+        }
+
+            .btn-edit:hover {
+                background: #fbbf24;
+                color: white;
+                transform: translateY(-2px);
+            }
+
+        .btn-delete {
+            color: #dc2626;
+            border-color: #fca5a5;
+            background: #fee2e2;
+        }
+
+            .btn-delete:hover {
+                background: #ef4444;
+                color: white;
+                transform: translateY(-2px);
+            }
+    </style>
+}
+
+<div class="container-fluid px-4">
+    <div class="page-header mt-3">
+        <div class="page-header-content d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="header-icon-wrapper">
+                    <i class="fa-solid fa-hospital-user"></i>
+                </div>
+                <div>
+                    <h1 class="page-title text-dark" style="font-size: 2rem; font-weight: 700;">Gestion des Patients</h1>
+                    <p class="page-subtitle text-muted">Accédez aux dossiers médicaux et coordonnées des patients</p>
+                </div>
+            </div>
+            <a asp-page="Create" class="btn btn-new-patient">
+                <i class="fa-solid fa-user-plus me-2"></i>Nouveau Patient
+            </a>
+        </div>
+    </div>
+
+    <div class="search-card">
+        <form method="get" class="row g-3">
+            <div class="col-md-8">
+                <div class="search-input-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" name="SearchString" value="@Model.SearchString"
+                           class="form-control search-input"
+                           placeholder="Rechercher par Nom, Prénom ou CIN..." />
+                </div>
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+                <button type="submit" class="btn btn-filter w-100">
+                    <i class="fa-solid fa-filter me-2"></i>Filtrer
+                </button>
+                <a asp-page="./Index" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" style="border-radius: 12px; font-weight: 600; border: 2px solid #e2e8f0;">
+                    Réinitialiser
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Identité du Patient</th>
+                        <th>CIN</th>
+                        <th>Coordonnées</th>
+                        <th>Date Naissance</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Patients != null && Model.Patients.Any())
+                    {
+                        @foreach (var item in Model.Patients)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="patient-avatar me-3 shadow-sm">
+                                            <i class="fa-solid fa-user-injured"></i>
+                                        </div>
+                                        <div>
+                                            <div class="patient-name">@item.Nom @item.Prenom</div>
+                                            <small class="text-muted fw-bold">Réf: #@item.IdPatient</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge-cin">@item.Cin</span>
+                                </td>
+                                <td>
+                                    <a href="tel:@item.Phone" class="contact-link">
+                                        <i class="fa-solid fa-phone me-2 opacity-50"></i>@item.Phone
+                                    </a>
+                                </td>
+                                <td class="text-muted small fw-semibold">
+                                    <i class="fa-regular fa-calendar me-2 opacity-50"></i>
+                                    @(item.DateNaiss.HasValue? item.DateNaiss.Value.ToString("dd/MM/yyyy") : "-")
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a asp-page="./Edit" asp-route-id="@item.IdPatient"
+                                           class="btn-action btn-edit" title="Modifier">
+                                            <i class="fa-solid fa-user-pen"></i>
+                                        </a>
+                                        <form method="post" asp-page-handler="Delete" asp-route-id="@item.IdPatient"
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce patient ?');">
+                                            <button type="submit" class="btn-action btn-delete" title="Supprimer">
+                                                <i class="fa-solid fa-user-minus"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5">
+                                <div class="text-center py-5 text-muted">
+                                    <i class="fa-solid fa-users-slash d-block mb-3 fs-1 opacity-25"></i>
+                                    <span style="font-size: 1.1rem;">Aucun dossier patient trouvé.</span>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

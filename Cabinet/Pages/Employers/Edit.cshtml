@@ -1,0 +1,135 @@
+﻿@page
+@model Cabinet.Pages.Employers.EditModel
+@{
+    ViewData["Title"] = "Modifier l'Employé";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow-lg border-0 rounded-3">
+            <div class="card-header bg-warning text-dark py-3">
+                <h4 class="mb-0"><i class="fa-solid fa-user-pen me-2"></i> Modifier l'Employé</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" autocomplete="off">
+                    @* This hidden field is essential to tell the database which ID to update *@
+                    <input type="hidden" asp-for="Employer.IdEmployer" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <h5 class="text-muted border-bottom pb-2 mb-3"><i class="fa-solid fa-id-card me-2"></i>Profil de l'Employé</h5>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Nom *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-user text-muted"></i></span>
+                                <input asp-for="Employer.Nom" class="form-control" placeholder="Nom" />
+                            </div>
+                            <span asp-validation-for="Employer.Nom" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Prénom *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-user text-muted"></i></span>
+                                <input asp-for="Employer.Prenom" class="form-control" placeholder="Prénom" />
+                            </div>
+                            <span asp-validation-for="Employer.Prenom" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-primary fw-bold">Rôle *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-user-tag text-primary"></i></span>
+                                <select asp-for="Employer.Role" class="form-select">
+                                    <option value="">-- Choisir --</option>
+                                    <option value="Medecin">Médecin</option>
+                                    <option value="Infirmier(e)">Infirmier(e)</option>
+                                    <option value="Secretaire">Secrétaire</option>
+                                    <option value="Informaticien">Informaticien</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Employer.Role" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Spécialité / Fonction</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-stethoscope text-muted"></i></span>
+                                <input asp-for="Employer.Fonction" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="text-muted border-bottom pb-2 mt-4 mb-3"><i class="fa-solid fa-shield-halved me-2"></i>Accès & Contact</h5>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label text-primary fw-bold">Email *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-envelope text-primary"></i></span>
+                                <input asp-for="Employer.Email" type="email" class="form-control" autocomplete="off" />
+                            </div>
+                            <span asp-validation-for="Employer.Email" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-danger fw-bold">Nouveau mot de passe *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-key text-danger"></i></span>
+                                <input asp-for="Employer.MotPasse" type="password" class="form-control" autocomplete="new-password" placeholder="Laisser vide pour ne pas changer" />
+                            </div>
+                            <span asp-validation-for="Employer.MotPasse" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-danger fw-bold">Confirmer mot de passe *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-check-double text-danger"></i></span>
+                                <input asp-for="Employer.ConfirmMotPasse" type="password" class="form-control" autocomplete="new-password" />
+                            </div>
+                            <span asp-validation-for="Employer.ConfirmMotPasse" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">Téléphone</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-phone text-muted"></i></span>
+                                <input asp-for="Employer.Telephone" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Adresse</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa-solid fa-map-location-dot text-muted"></i></span>
+                            <textarea asp-for="Employer.Adresse" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-page="./Index" class="btn btn-outline-secondary px-4 rounded-pill">
+                            <i class="fa-solid fa-xmark me-1"></i> Annuler
+                        </a>
+                        <button type="submit" class="btn btn-success px-5 rounded-pill shadow-sm">
+                            <i class="fa-solid fa-user-check me-1"></i> Enregistrer les modifications
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

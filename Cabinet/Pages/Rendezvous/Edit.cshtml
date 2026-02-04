@@ -1,0 +1,153 @@
+﻿@page
+@model Cabinet.Pages.Rendezvous.EditModel
+@{
+    ViewData["Title"] = "Modifier le Rendez-vous";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow-lg border-0 rounded-3">
+            <div class="card-header bg-warning text-dark py-3">
+                <h4 class="mb-0"><i class="fa-solid fa-pen-to-square me-2"></i> Modifier le Rendez-vous</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" autocomplete="off">
+                    <input type="hidden" asp-for="Rendezvous.IdRdv" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <h5 class="text-muted border-bottom pb-2 mb-3">
+                        <i class="fa-solid fa-user me-2"></i>Informations Patient
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Rendezvous.Nom" class="form-label fw-bold">Nom *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                                <input asp-for="Rendezvous.Nom" class="form-control" />
+                            </div>
+                            <span asp-validation-for="Rendezvous.Nom" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Rendezvous.Prenom" class="form-label fw-bold">Prénom *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                                <input asp-for="Rendezvous.Prenom" class="form-control" />
+                            </div>
+                            <span asp-validation-for="Rendezvous.Prenom" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Rendezvous.Sexe" class="form-label fw-bold">Sexe</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-venus-mars"></i></span>
+                                <select asp-for="Rendezvous.Sexe" class="form-select">
+                                    <option value="">-- Sélectionner --</option>
+                                    <option value="Masculin">Masculin</option>
+                                    <option value="Féminin">Féminin</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Rendezvous.Sexe" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Rendezvous.Phone" class="form-label fw-bold">Téléphone</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
+                                <input asp-for="Rendezvous.Phone" class="form-control"
+                                       placeholder="06XXXXXXXX" maxlength="10" />
+                            </div>
+                            <span asp-validation-for="Rendezvous.Phone" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <h5 class="text-muted border-bottom pb-2 mt-4 mb-3">
+                        <i class="fa-solid fa-clock-rotate-left me-2"></i>Détails du Programme
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Rendezvous.DateHeure" class="form-label fw-bold text-primary">
+                                Date & Heure *
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-calendar"></i></span>
+                                <input asp-for="Rendezvous.DateHeure"
+                                       type="datetime-local"
+                                       class="form-control" />
+                            </div>
+                            <span asp-validation-for="Rendezvous.DateHeure" class="text-danger small"></span>
+                            <small class="text-muted">Format: JJ/MM/AAAA HH:MM</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Rendezvous.Service" class="form-label fw-bold text-primary">
+                                Service demandé *
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-stethoscope"></i></span>
+                                <select asp-for="Rendezvous.Service"
+                                        asp-items="Model.ServiceOptions"
+                                        class="form-select">
+                                    <option value="">-- Choisir un service --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Rendezvous.Service" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-page="Index" class="btn btn-outline-secondary rounded-pill px-4">
+                            <i class="fa-solid fa-xmark me-2"></i>Annuler
+                        </a>
+                        <button type="submit" class="btn btn-success px-5 rounded-pill shadow-sm fw-bold">
+                            <i class="fa-solid fa-user-check me-2"></i>Enregistrer les modifications
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Fix jQuery validation for datetime-local step attribute
+        if ($.validator) {
+            $.validator.methods.date = function(value, element) {
+                return this.optional(element) || !/Invalid|NaN/.test(new Date(value).toString());
+            };
+        }
+
+        // Force datetime-local to only show minutes (remove seconds)
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.querySelector('input[type="datetime-local"]');
+            if (dateInput) {
+                // Format the initial value to remove seconds
+                if (dateInput.value) {
+                    const date = new Date(dateInput.value);
+                    const formatted = date.getFullYear() + '-' +
+                        String(date.getMonth() + 1).padStart(2, '0') + '-' +
+                        String(date.getDate()).padStart(2, '0') + 'T' +
+                        String(date.getHours()).padStart(2, '0') + ':' +
+                        String(date.getMinutes()).padStart(2, '0');
+                    dateInput.value = formatted;
+                }
+
+                // Remove seconds when user changes the value
+                dateInput.addEventListener('change', function() {
+                    if (this.value) {
+                        const date = new Date(this.value);
+                        const formatted = date.getFullYear() + '-' +
+                            String(date.getMonth() + 1).padStart(2, '0') + '-' +
+                            String(date.getDate()).padStart(2, '0') + 'T' +
+                            String(date.getHours()).padStart(2, '0') + ':' +
+                            String(date.getMinutes()).padStart(2, '0');
+                        this.value = formatted;
+                    }
+                });
+            }
+        });
+    </script>
+}

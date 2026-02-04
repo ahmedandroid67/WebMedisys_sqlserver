@@ -1,0 +1,435 @@
+﻿@page
+@model Cabinet.Pages.Stock.IndexModel
+@{
+    ViewData["Title"] = "Gestion du Stock";
+}
+
+@section Styles {
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #4f46e5;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(79, 70, 229, 0.1);
+        }
+
+        .header-icon-wrapper {
+            background: var(--primary-gradient);
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            margin-right: 1.5rem;
+        }
+
+            .header-icon-wrapper i {
+                color: white;
+                font-size: 2rem;
+            }
+
+        .btn-premium {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            text-decoration: none;
+        }
+
+            .btn-premium:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+                color: white;
+            }
+
+        .search-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .search-input {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            height: 45px;
+            transition: all 0.3s ease;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #e2e8f0;
+        }
+
+        .table thead th {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: #475569;
+            padding: 1.2rem 1rem;
+            background: #f8fafc;
+            border: none;
+        }
+
+        .stock-avatar {
+            background: #eef2ff;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+
+        .badge-soft {
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: 2px solid;
+        }
+
+        .badge-soft-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-color: #6ee7b7;
+        }
+
+        .badge-soft-danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #fca5a5;
+        }
+
+        .badge-soft-info {
+            background: #e0f2fe;
+            color: #0369a1;
+            border-color: #bae6fd;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-action {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            border: 2px solid;
+            background: white;
+        }
+
+        .btn-movement {
+            color: var(--primary-color);
+            border-color: #c7d2fe;
+            background: #eef2ff;
+        }
+
+            .btn-movement:hover {
+                background: var(--primary-color);
+                color: white;
+                transform: translateY(-2px);
+            }
+
+        .btn-edit {
+            color: #d97706;
+            border-color: #fcd34d;
+            background: #fef3c7;
+        }
+
+            .btn-edit:hover {
+                background: #fbbf24;
+                color: white;
+                transform: translateY(-2px);
+            }
+
+        .btn-delete {
+            color: #dc2626;
+            border-color: #fca5a5;
+            background: #fee2e2;
+        }
+
+            .btn-delete:hover {
+                background: #ef4444;
+                color: white;
+                transform: translateY(-2px);
+            }
+    </style>
+}
+
+<div class="container-fluid px-4">
+    <div class="page-header mt-3">
+        <div class="page-header-content d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="header-icon-wrapper">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                </div>
+                <div>
+                    <h1 class="h3 mb-0 fw-bold text-dark" style="font-size: 2rem; letter-spacing: -0.5px;">Inventaire & Stock</h1>
+                    <p class="text-muted small mb-0" style="font-size: 0.95rem;">Matériels, outils et consommables du cabinet</p>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4 fw-bold" style="border: 2px solid #e2e8f0;" data-bs-toggle="modal" data-bs-target="#modalCategories">
+                    <i class="fa-solid fa-tags me-2"></i>Catégories
+                </button>
+                <a asp-page="Create" class="btn btn-premium">
+                    <i class="fa-solid fa-plus-circle me-2"></i>Nouveau Produit
+                </a>
+                <a asp-page="./History" class="btn btn-outline-primary rounded-pill px-4 shadow-sm fw-bold">
+                    <i class="fa-solid fa-history me-2"></i>Historique
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-4">
+            <i class="fa-solid fa-circle-exclamation me-2"></i> @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="search-card">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label small fw-bold text-muted">Recherche</label>
+                <input type="text" asp-for="SearchString" class="form-control search-input" placeholder="Nom du produit...">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold text-muted">Catégorie</label>
+                <select asp-for="CategoryFilter" class="form-select search-input">
+                    <option value="">Toutes les catégories</option>
+                    @foreach (var cat in Model.Categories)
+                    {
+                        <option value="@cat.Id">@cat.Nom</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 d-grid">
+                <button type="submit" class="btn btn-premium" style="height: 45px; padding: 0;">
+                    <i class="fa-solid fa-filter me-2"></i>Appliquer
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Catégorie</th>
+                        <th>Quantité</th>
+                        <th>Seuil</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.StockList)
+                    {
+                        var isLow = item.Quantite <= item.Alarme;
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="stock-avatar me-3 shadow-sm">
+                                        <i class="fa-solid fa-box"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">@item.Nom</div>
+                                        <small class="text-muted italic" style="font-style: italic;">@item.Observation</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge-soft badge-soft-info">@item.Category?.Nom</span>
+                            </td>
+                            <td>
+                                <span class="badge-soft @(isLow ? "badge-soft-danger" : "badge-soft-success")">
+                                    @item.Quantite Unités
+                                </span>
+                            </td>
+                            <td class="text-muted fw-bold">@item.Alarme</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button type="button" class="btn-action btn-movement"
+                                            onclick="openMovementModal(@item.Id, '@item.Nom', @item.Quantite)" title="Mouvement">
+                                        <i class="fa-solid fa-right-left"></i>
+                                    </button>
+                                    <a asp-page="./Edit" asp-route-id="@item.Id" class="btn-action btn-edit" title="Modifier">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                    <form method="post" asp-page-handler="DeleteProduct" asp-route-id="@item.Id"
+                                          onsubmit="return confirm('Supprimer ce produit ?');">
+                                        <button type="submit" class="btn-action btn-delete" title="Supprimer">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@* MODAL FOR STOCK MOVEMENT *@
+<div class="modal fade" id="modalMovement" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" asp-page-handler="RecordMovement" class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header bg-primary text-white border-0 py-3" style="background: var(--primary-gradient) !important;">
+                <h5 class="modal-title fw-bold"><i class="fa-solid fa-clock-rotate-left me-2"></i>Nouveau Mouvement</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="hidden" name="MoveStockId" id="MoveStockId" />
+                <div class="text-center mb-4">
+                    <h5 id="MoveProductName" class="text-primary fw-bold mb-1"></h5>
+                    <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
+                        Stock Actuel: <span id="CurrentStockDisplay" class="fw-bold">0</span> unités
+                    </span>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">Date</label>
+                        <input type="datetime-local" name="MoveDate" class="form-control rounded-3" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">Responsable</label>
+                        <select name="MoveEmployerId" class="form-select rounded-3" required>
+                            <option value="">Sélectionner...</option>
+                            @foreach (var emp in Model.EmployeeOptions)
+                            {
+                                <option value="@emp.IdEmployer">@emp.Nom @emp.Prenom</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">Opération</label>
+                        <select name="MoveType" id="MoveTypeSelect" class="form-select rounded-3" onchange="validateStock()" required>
+                            <option value="Entrée">Entrée (+)</option>
+                            <option value="Sortie" selected>Sortie (-)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">Quantité</label>
+                        <input type="number" name="MoveQty" id="MoveQtyInput" class="form-control rounded-3" min="1" oninput="validateStock()" required />
+                    </div>
+                </div>
+
+                <div id="stockWarning" class="alert alert-danger py-2 small d-none mt-3 rounded-3 border-0">
+                    <i class="fa-solid fa-triangle-exclamation me-2"></i> Stock insuffisant !
+                </div>
+
+                <div class="mt-3">
+                    <label class="form-label small fw-bold">Motif / Justification</label>
+                    <input type="text" name="MoveMotif" class="form-control rounded-3" placeholder="Ex: Réapprovisionnement..." required />
+                </div>
+            </div>
+            <div class="modal-footer border-0 p-4 pt-0">
+                <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Annuler</button>
+                <button type="submit" id="btnSubmitMovement" class="btn btn-premium rounded-pill px-4">Confirmer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@* MODAL CATEGORIES (Existing logic kept, style updated) *@
+<div class="modal fade" id="modalCategories" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow" style="border-radius: 20px;">
+            <div class="modal-header bg-dark text-white border-0">
+                <h5 class="modal-title fw-bold"><i class="fa-solid fa-tags me-2"></i>Gestion Catégories</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form method="post" asp-page-handler="AddCategory" class="mb-4 pb-4 border-bottom">
+                    <div class="input-group">
+                        <input asp-for="NewCategory.Nom" class="form-control" style="border-radius: 12px 0 0 12px;" placeholder="Nouvelle catégorie..." required />
+                        <button type="submit" class="btn btn-dark px-4" style="border-radius: 0 12px 12px 0;">Ajouter</button>
+                    </div>
+                </form>
+                <ul class="list-group list-group-flush">
+                    @foreach (var cat in Model.Categories)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 border-0 mb-1">
+                            <span class="fw-semibold text-dark"><i class="fa-solid fa-folder text-warning me-2"></i>@cat.Nom</span>
+                            <form method="post" asp-page-handler="DeleteCategory" asp-route-id="@cat.Id" onsubmit="return confirm('Supprimer ?');">
+                                <button class="btn btn-sm text-danger"><i class="fa-solid fa-trash-can"></i></button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let availableStock = 0;
+
+        function openMovementModal(id, name, currentQty) {
+            availableStock = currentQty;
+            document.getElementById('MoveStockId').value = id;
+            document.getElementById('MoveProductName').innerText = name;
+            document.getElementById('CurrentStockDisplay').innerText = currentQty;
+            document.getElementById('MoveQtyInput').value = "";
+            document.getElementById('MoveTypeSelect').value = "Sortie";
+            validateStock();
+            new bootstrap.Modal(document.getElementById('modalMovement')).show();
+        }
+
+        function validateStock() {
+            const type = document.getElementById('MoveTypeSelect').value;
+            const qtyInput = document.getElementById('MoveQtyInput');
+            const qty = parseInt(qtyInput.value) || 0;
+            const btn = document.getElementById('btnSubmitMovement');
+            const warning = document.getElementById('stockWarning');
+
+            if (type === "Sortie" && qty > availableStock) {
+                btn.disabled = true;
+                warning.classList.remove('d-none');
+                qtyInput.classList.add('is-invalid');
+            } else {
+                btn.disabled = false;
+                warning.classList.add('d-none');
+                qtyInput.classList.remove('is-invalid');
+            }
+        }
+    </script>
+}

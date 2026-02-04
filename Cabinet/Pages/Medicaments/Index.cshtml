@@ -1,0 +1,304 @@
+﻿@page
+@model Cabinet.Pages.Medicaments.IndexModel
+@{
+    ViewData["Title"] = "Gestion des Médicaments";
+}
+
+@section Styles {
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #4f46e5;
+            --success-color: #10b981;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(79, 70, 229, 0.1);
+        }
+
+        .header-icon-wrapper {
+            background: var(--primary-gradient);
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            margin-right: 1.5rem;
+        }
+
+            .header-icon-wrapper i {
+                color: white;
+                font-size: 2rem;
+            }
+
+        .btn-new-med {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            text-decoration: none;
+        }
+
+            .btn-new-med:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+                color: white;
+            }
+
+        .search-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid #e2e8f0;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+        }
+
+            .search-input-wrapper i {
+                position: absolute;
+                left: 1.2rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #94a3b8;
+                z-index: 10;
+            }
+
+        .search-input {
+            padding-left: 3rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            height: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-filter {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            border: none;
+            color: white;
+            height: 50px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #e2e8f0;
+        }
+
+        .table thead th {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: #475569;
+            padding: 1.2rem 1rem;
+            background: #f8fafc;
+            border: none;
+        }
+
+        .med-avatar {
+            background: #eef2ff;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .code-badge {
+            background: #f1f5f9;
+            color: #475569;
+            border: 2px solid #e2e8f0;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .price-text {
+            color: var(--success-color);
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-action {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            border: 2px solid;
+            background: white;
+        }
+
+        .btn-edit {
+            color: #d97706;
+            border-color: #fcd34d;
+            background: #fef3c7;
+        }
+
+            .btn-edit:hover {
+                background: #fbbf24;
+                color: white;
+                transform: translateY(-2px);
+            }
+
+        .btn-delete {
+            color: #dc2626;
+            border-color: #fca5a5;
+            background: #fee2e2;
+        }
+
+            .btn-delete:hover {
+                background: #ef4444;
+                color: white;
+                transform: translateY(-2px);
+            }
+    </style>
+}
+
+<div class="container-fluid px-4">
+    <div class="page-header mt-3">
+        <div class="page-header-content d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="header-icon-wrapper">
+                    <i class="fa-solid fa-pills"></i>
+                </div>
+                <div>
+                    <h1 class="page-title text-dark" style="font-size: 2rem; font-weight: 700; letter-spacing: -0.5px;">Gestion des Médicaments</h1>
+                    <p class="page-subtitle text-muted">Consultez et gérez la base de données pharmaceutique</p>
+                </div>
+            </div>
+            <a asp-page="Create" class="btn btn-new-med">
+                <i class="fa-solid fa-prescription-bottle-medical me-2"></i>Nouveau Médicament
+            </a>
+        </div>
+    </div>
+
+    <div class="search-card">
+        <form method="get" class="row g-3">
+            <div class="col-md-9">
+                <div class="search-input-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" name="SearchString" value="@Model.SearchString"
+                           class="form-control search-input"
+                           placeholder="Rechercher par Nom, Code ou DCI (molécule)..." />
+                </div>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-filter w-100">Filtrer</button>
+                <a asp-page="./Index" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center" style="border-radius: 12px; font-weight: 600; border: 2px solid #e2e8f0;">
+                    Réinitialiser
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Nom Commercial</th>
+                        <th>DCI / Molécule</th>
+                        <th>Dosage</th>
+                        <th>Prix (DH)</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Medicaments != null && Model.Medicaments.Any())
+                    {
+                        @foreach (var item in Model.Medicaments)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="code-badge">@item.Code</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="med-avatar me-3 shadow-sm">
+                                            <i class="fa-solid fa-prescription-bottle-medical"></i>
+                                        </div>
+                                        <div class="fw-bold text-dark">@item.Nom</div>
+                                    </div>
+                                </td>
+                                <td class="text-muted font-italic" style="font-style: italic;">@item.Dci1</td>
+                                <td>
+                                    <span class="badge bg-light text-dark fw-normal border">
+                                        <i class="fa-solid fa-vial fa-xs me-1 text-muted"></i>
+                                        @item.Dosage1 @item.UniteDosage1
+                                    </span>
+                                </td>
+                                <td class="price-text">
+                                    @(item.Ppv?.ToString("N2")) <small>DH</small>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a asp-page="./Edit" asp-route-id="@item.Id"
+                                           class="btn-action btn-edit" title="Modifier">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </a>
+                                        <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id"
+                                              onsubmit="return confirm('Supprimer ce médicament ?');">
+                                            <button type="submit" class="btn-action btn-delete" title="Supprimer">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="fa-solid fa-mortar-pestle d-block mb-3 fs-1 opacity-25"></i>
+                                <span>Aucun médicament trouvé dans la base de données.</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-white border-top-0 py-3">
+            <small class="text-muted" style="font-style: italic;">
+                <i class="fa-solid fa-circle-info me-1"></i>
+                Affichage limité aux 50 premiers résultats. Utilisez la recherche pour filtrer la pharmacopée.
+            </small>
+        </div>
+    </div>
+</div>

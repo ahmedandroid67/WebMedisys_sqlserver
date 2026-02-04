@@ -1,0 +1,262 @@
+﻿@page
+@model Cabinet.Pages.Employers.IndexModel
+@{
+    ViewData["Title"] = "Gestion des Employés";
+}
+
+@section Styles {
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #4f46e5;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(79, 70, 229, 0.1);
+        }
+
+        .header-icon-wrapper {
+            background: var(--primary-gradient);
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            margin-right: 1.5rem;
+        }
+
+            .header-icon-wrapper i {
+                color: white;
+                font-size: 2rem;
+            }
+
+        .btn-add-employee {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            text-decoration: none;
+        }
+
+            .btn-add-employee:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+                color: white;
+            }
+
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #e2e8f0;
+        }
+
+        .table thead th {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            color: #475569;
+            padding: 1.2rem 1rem;
+            background: #f8fafc;
+            border: none;
+        }
+
+        .employee-avatar {
+            background: #eef2ff;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .employee-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1rem;
+        }
+
+        /* Role Badge Styling */
+        .role-badge {
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            background: #dbeafe;
+            color: #1e40af;
+            border: 2px solid #93c5fd;
+            display: inline-block;
+        }
+
+        .contact-info {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+            .contact-info i {
+                width: 20px;
+                color: #94a3b8;
+            }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-action {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            border: 2px solid;
+            background: white;
+        }
+
+        .btn-edit {
+            color: #d97706;
+            border-color: #fcd34d;
+            background: #fef3c7;
+        }
+
+            .btn-edit:hover {
+                background: #fbbf24;
+                color: white;
+                transform: translateY(-2px);
+            }
+
+        .btn-delete {
+            color: #dc2626;
+            border-color: #fca5a5;
+            background: #fee2e2;
+        }
+
+            .btn-delete:hover {
+                background: #ef4444;
+                color: white;
+                transform: translateY(-2px);
+            }
+    </style>
+}
+
+<div class="container-fluid px-4">
+    <div class="page-header mt-3">
+        <div class="page-header-content d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="header-icon-wrapper">
+                    <i class="fa-solid fa-users-gear"></i>
+                </div>
+                <div>
+                    <h1 class="h3 mb-0 fw-bold text-dark" style="font-size: 2rem; letter-spacing: -0.5px;">Gestion des Employés</h1>
+                    <p class="text-muted small mb-0" style="font-size: 0.95rem;">Administrez les comptes utilisateurs, rôles et accès du personnel</p>
+                </div>
+            </div>
+            <a asp-page="Create" class="btn btn-add-employee">
+                <i class="fa-solid fa-user-plus me-2"></i>Ajouter un Employé
+            </a>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Employé</th>
+                        <th>Rôle & Fonction</th>
+                        <th>Contact</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Employers != null && Model.Employers.Any())
+                    {
+                        @foreach (var item in Model.Employers)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="employee-avatar me-3 shadow-sm">
+                                            <i class="fa-solid fa-user-doctor"></i>
+                                        </div>
+                                        <div>
+                                            <div class="employee-name">@item.Nom @item.Prenom</div>
+                                            <small class="text-muted fw-bold">ID: #@item.IdEmployer</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="mb-1">
+                                        <span class="role-badge">
+                                            <i class="fa-solid fa-id-badge me-1"></i> @item.Role
+                                        </span>
+                                    </div>
+                                    <small class="text-secondary fw-semibold">
+                                        <i class="fa-solid fa-briefcase me-1"></i> @item.Fonction
+                                    </small>
+                                </td>
+                                <td>
+                                    <div class="contact-info mb-1">
+                                        <i class="fa-solid fa-envelope"></i> @item.Email
+                                    </div>
+                                    <div class="contact-info">
+                                        <i class="fa-solid fa-phone"></i> @item.Telephone
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a asp-page="./Edit" asp-route-id="@item.IdEmployer"
+                                           class="btn-action btn-edit" title="Modifier">
+                                            <i class="fa-solid fa-user-pen"></i>
+                                        </a>
+                                        <form method="post" asp-page-handler="Delete" asp-route-id="@item.IdEmployer"
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet employé ?');">
+                                            <button type="submit" class="btn-action btn-delete" title="Supprimer">
+                                                <i class="fa-solid fa-user-xmark"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">
+                                <div class="text-center py-5 text-muted">
+                                    <i class="fa-solid fa-users-slash d-block mb-3 fs-1 opacity-25"></i>
+                                    <span style="font-size: 1.1rem;">Aucun employé enregistré dans le système.</span>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
