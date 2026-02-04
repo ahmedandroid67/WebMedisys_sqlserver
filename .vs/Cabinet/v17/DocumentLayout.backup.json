@@ -1,0 +1,343 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\pages\\consultations\\edit.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\pages\\consultations\\edit.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\pages\\consultations\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\pages\\consultations\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\pages\\consultations\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\pages\\consultations\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\pages\\consultations\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\pages\\consultations\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Migrations\\20260117120010_AddServiceToConsultation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Cabinet\\Migrations\\20260117120010_AddServiceToConsultation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\models\\consultation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\models\\consultation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\pages\\consultations\\create.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\pages\\consultations\\create.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\pages\\consultations\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\pages\\consultations\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\pages\\consultations\\printordonnance.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\pages\\consultations\\printordonnance.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\pages\\consultations\\printordonnance.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\pages\\consultations\\printordonnance.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\pages\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\pages\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\migrations\\20260117114102_addcabinetinfotable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\migrations\\20260117114102_addcabinetinfotable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\pages\\settings\\cabinet.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\pages\\settings\\cabinet.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\pages\\settings\\cabinet.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\pages\\settings\\cabinet.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\models\\cabinetinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\models\\cabinetinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\pages\\stock\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\pages\\stock\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|c:\\users\\ahmed\\desktop\\cabinetwebapp\\cabinet\\cabinet\\pages\\stock\\history.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6E312889-6E58-4FEF-BC05-367CA89F118C}|Cabinet\\Cabinet.csproj|solutionrelative:cabinet\\pages\\stock\\history.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Edit.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\Edit.cshtml.cs",
+              "RelativeDocumentMoniker": "Cabinet\\Pages\\Consultations\\Edit.cshtml.cs",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\Edit.cshtml.cs",
+              "RelativeToolTip": "Cabinet\\Pages\\Consultations\\Edit.cshtml.cs",
+              "ViewState": "AgIAACoAAAAAAAAAAAAwwEAAAABLAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-17T12:19:20.934Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Index.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\Index.cshtml.cs",
+              "RelativeDocumentMoniker": "Cabinet\\Pages\\Consultations\\Index.cshtml.cs",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\Index.cshtml.cs",
+              "RelativeToolTip": "Cabinet\\Pages\\Consultations\\Index.cshtml.cs",
+              "ViewState": "AgIAACIAAAAAAAAAAAAAACgAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-17T12:01:23.736Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\Index.cshtml",
+              "RelativeDocumentMoniker": "Cabinet\\Pages\\Consultations\\Index.cshtml",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\Index.cshtml",
+              "RelativeToolTip": "Cabinet\\Pages\\Consultations\\Index.cshtml",
+              "ViewState": "AgIAAIAAAAAAAAAAAAAQwKAAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-17T12:00:56.068Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "20260117120010_AddServiceToConsultation.cs",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Migrations\\20260117120010_AddServiceToConsultation.cs",
+              "RelativeDocumentMoniker": "Cabinet\\Migrations\\20260117120010_AddServiceToConsultation.cs",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Migrations\\20260117120010_AddServiceToConsultation.cs",
+              "RelativeToolTip": "Cabinet\\Migrations\\20260117120010_AddServiceToConsultation.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-17T12:00:10.496Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Consultation.cs",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Models\\Consultation.cs",
+              "RelativeDocumentMoniker": "Cabinet\\Models\\Consultation.cs",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Models\\Consultation.cs",
+              "RelativeToolTip": "Cabinet\\Models\\Consultation.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAzwEMAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-17T11:59:02.97Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Create.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\Create.cshtml.cs",
+              "RelativeDocumentMoniker": "Cabinet\\Pages\\Consultations\\Create.cshtml.cs",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\Create.cshtml.cs",
+              "RelativeToolTip": "Cabinet\\Pages\\Consultations\\Create.cshtml.cs",
+              "ViewState": "AgIAAEAAAAAAAAAAAAAIwFEAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-17T11:57:25.673Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\Create.cshtml",
+              "RelativeDocumentMoniker": "Cabinet\\Pages\\Consultations\\Create.cshtml",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\Create.cshtml",
+              "RelativeToolTip": "Cabinet\\Pages\\Consultations\\Create.cshtml",
+              "ViewState": "AgIAAIYAAAAAAAAAAAAQwK8AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-17T11:56:48.583Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "PrintOrdonnance.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\PrintOrdonnance.cshtml.cs",
+              "RelativeDocumentMoniker": "Cabinet\\Pages\\Consultations\\PrintOrdonnance.cshtml.cs",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\PrintOrdonnance.cshtml.cs",
+              "RelativeToolTip": "Cabinet\\Pages\\Consultations\\PrintOrdonnance.cshtml.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAzwD4AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-17T11:46:02.7Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "PrintOrdonnance.cshtml",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\PrintOrdonnance.cshtml",
+              "RelativeDocumentMoniker": "Cabinet\\Pages\\Consultations\\PrintOrdonnance.cshtml",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\PrintOrdonnance.cshtml",
+              "RelativeToolTip": "Cabinet\\Pages\\Consultations\\PrintOrdonnance.cshtml",
+              "ViewState": "AgIAAFAAAAAAAAAAAAAnwF8AAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-17T11:45:27.711Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Edit.cshtml",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\Edit.cshtml",
+              "RelativeDocumentMoniker": "Cabinet\\Pages\\Consultations\\Edit.cshtml",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Consultations\\Edit.cshtml",
+              "RelativeToolTip": "Cabinet\\Pages\\Consultations\\Edit.cshtml",
+              "ViewState": "AgIAAKwAAAAAAAAAAAAQwM4AAABgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-17T11:22:52.343Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "20260117114102_AddCabinetInfoTable.cs",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Migrations\\20260117114102_AddCabinetInfoTable.cs",
+              "RelativeDocumentMoniker": "Cabinet\\Migrations\\20260117114102_AddCabinetInfoTable.cs",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Migrations\\20260117114102_AddCabinetInfoTable.cs",
+              "RelativeToolTip": "Cabinet\\Migrations\\20260117114102_AddCabinetInfoTable.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-17T11:41:02.909Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "Cabinet\\Data\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "Cabinet\\Data\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-17T11:35:24.446Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Cabinet.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Settings\\Cabinet.cshtml.cs",
+              "RelativeDocumentMoniker": "Cabinet\\Pages\\Settings\\Cabinet.cshtml.cs",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Settings\\Cabinet.cshtml.cs",
+              "RelativeToolTip": "Cabinet\\Pages\\Settings\\Cabinet.cshtml.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAYwBkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-17T11:34:11.829Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Cabinet.cshtml",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Settings\\Cabinet.cshtml",
+              "RelativeDocumentMoniker": "Cabinet\\Pages\\Settings\\Cabinet.cshtml",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Settings\\Cabinet.cshtml",
+              "RelativeToolTip": "Cabinet\\Pages\\Settings\\Cabinet.cshtml",
+              "ViewState": "AgIAACsAAAAAAAAAAAAYwFIAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-17T11:34:07.402Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "CabinetInfo.cs",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Models\\CabinetInfo.cs",
+              "RelativeDocumentMoniker": "Cabinet\\Models\\CabinetInfo.cs",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Models\\CabinetInfo.cs",
+              "RelativeToolTip": "Cabinet\\Models\\CabinetInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-17T11:33:13.184Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "Cabinet\\Pages\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "Cabinet\\Pages\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAEEAAAAAAAAAAAAAAFYAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-17T10:37:19.726Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Stock\\Index.cshtml",
+              "RelativeDocumentMoniker": "Cabinet\\Pages\\Stock\\Index.cshtml",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Stock\\Index.cshtml",
+              "RelativeToolTip": "Cabinet\\Pages\\Stock\\Index.cshtml",
+              "ViewState": "AgIAALEAAAAAAAAAAAAlwMYAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-17T10:18:59.237Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "History.cshtml",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Stock\\History.cshtml",
+              "RelativeDocumentMoniker": "Cabinet\\Pages\\Stock\\History.cshtml",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\Pages\\Stock\\History.cshtml",
+              "RelativeToolTip": "Cabinet\\Pages\\Stock\\History.cshtml",
+              "ViewState": "AgIAAEcBAAAAAAAAAAAlwFQBAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-17T10:17:50.609Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "site.css",
+              "DocumentMoniker": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\wwwroot\\css\\site.css",
+              "RelativeDocumentMoniker": "Cabinet\\wwwroot\\css\\site.css",
+              "ToolTip": "C:\\Users\\Ahmed\\Desktop\\CabinetWebApp\\Cabinet\\Cabinet\\wwwroot\\css\\site.css",
+              "RelativeToolTip": "Cabinet\\wwwroot\\css\\site.css",
+              "ViewState": "AgIAAGoBAAAAAAAAAAAwwJMBAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-01-16T10:41:32.16Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
