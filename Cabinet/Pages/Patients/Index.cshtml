@@ -203,6 +203,13 @@
 }
 
 <div class="container-fluid px-4">
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger mt-3 mb-0" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
     <div class="page-header mt-3">
         <div class="page-header-content d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">

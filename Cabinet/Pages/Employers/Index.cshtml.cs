@@ -34,6 +34,24 @@ namespace Cabinet.Pages.Employers
 
             if (employer != null)
             {
+                var currentUserEmail = User?.Identity?.Name;
+                if (!string.IsNullOrWhiteSpace(currentUserEmail) &&
+                    string.Equals(employer.Email, currentUserEmail, StringComparison.OrdinalIgnoreCase))
+                {
+                    TempData["ErrorMessage"] = "Suppression impossible: vous ne pouvez pas supprimer votre propre compte.";
+                    return RedirectToPage("./Index");
+                }
+
+                if (string.Equals(employer.Role, "Admin", StringComparison.OrdinalIgnoreCase))
+                {
+                    var adminCount = await _context.Employer.CountAsync(e => e.Role == "Admin");
+                    if (adminCount <= 1)
+                    {
+                        TempData["ErrorMessage"] = "Suppression impossible: au moins un compte Admin doit rester actif.";
+                        return RedirectToPage("./Index");
+                    }
+                }
+
                 _context.Employer.Remove(employer);
                 await _context.SaveChangesAsync();
             }

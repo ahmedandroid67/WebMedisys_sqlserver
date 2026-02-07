@@ -46,6 +46,15 @@ namespace Cabinet.Pages.Patients
 
             if (patient != null)
             {
+                var hasConsultations = await _context.Consultation.AnyAsync(c => c.PatientId == id);
+                var hasOrdonnances = await _context.Ordonnance.AnyAsync(o => o.PatientID == id);
+
+                if (hasConsultations || hasOrdonnances)
+                {
+                    TempData["ErrorMessage"] = "Suppression impossible: ce patient possède des consultations ou des ordonnances.";
+                    return RedirectToPage("./Index");
+                }
+
                 _context.Patient.Remove(patient);
                 await _context.SaveChangesAsync();
             }

@@ -86,6 +86,19 @@ namespace Cabinet.Pages.Consultations
             var consultation = await _context.Consultation.FindAsync(id);
             if (consultation != null)
             {
+                if (consultation.PatientId.HasValue && consultation.DateConsultation.HasValue)
+                {
+                    var hasPrescription = await _context.Ordonnance.AnyAsync(o =>
+                        o.PatientID == consultation.PatientId.Value &&
+                        o.DatePrescription.Date == consultation.DateConsultation.Value.Date);
+
+                    if (hasPrescription)
+                    {
+                        TempData["ErrorMessage"] = "Suppression impossible: cette consultation possède une ordonnance associée.";
+                        return RedirectToPage("./Index");
+                    }
+                }
+
                 _context.Consultation.Remove(consultation);
                 await _context.SaveChangesAsync();
             }

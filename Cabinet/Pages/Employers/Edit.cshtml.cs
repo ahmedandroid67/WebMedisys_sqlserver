@@ -1,5 +1,6 @@
 using Cabinet.Data;
 using Cabinet.Models;
+using Cabinet.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -38,13 +39,50 @@ namespace Cabinet.Pages.Employers
         // 2. POST: Saves the changes
         public async Task<IActionResult> OnPostAsync()
         {
+            var changingPassword = !string.IsNullOrWhiteSpace(Employer.MotPasse);
+            if (!changingPassword)
+            {
+                // Password update is optional on this form.
+                ModelState.Remove("Employer.MotPasse");
+                ModelState.Remove("Employer.ConfirmMotPasse");
+            }
+            else if (!string.Equals(Employer.MotPasse, Employer.ConfirmMotPasse, StringComparison.Ordinal))
+            {
+                ModelState.AddModelError("Employer.ConfirmMotPasse", "Les mots de passe ne correspondent pas.");
+            }
+
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            // Tell the database that this specific Employer has been modified
-            _context.Attach(Employer).State = EntityState.Modified;
+            var existing = await _context.Employer.FirstOrDefaultAsync(e => e.IdEmployer == Employer.IdEmployer);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+
+            var normalizedEmail = Employer.Email.Trim().ToLowerInvariant();
+            var duplicateEmail = await _context.Employer
+                .AnyAsync(e => e.IdEmployer != Employer.IdEmployer && e.Email != null && e.Email.ToLower() == normalizedEmail);
+            if (duplicateEmail)
+            {
+                ModelState.AddModelError("Employer.Email", "Cet email existe déjà.");
+                return Page();
+            }
+
+            existing.Nom = Employer.Nom;
+            existing.Prenom = Employer.Prenom;
+            existing.Email = normalizedEmail;
+            existing.Role = Employer.Role;
+            existing.Fonction = Employer.Fonction;
+            existing.Telephone = Employer.Telephone;
+            existing.Adresse = Employer.Adresse;
+
+            if (changingPassword)
+            {
+                existing.MotPasse = PasswordSecurity.HashPassword(Employer.MotPasse);
+            }
 
             try
             {

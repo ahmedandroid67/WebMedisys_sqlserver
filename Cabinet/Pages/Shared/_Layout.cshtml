@@ -48,67 +48,71 @@
                                 </a>
                             </li>
 
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" style="color: var(--text-submenu) !important;"  href="#" role="button" data-bs-toggle="dropdown">
-                                    <i class="fa-solid fa-file-waveform"></i>
-                                    <span>Administration</span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-page="/Reports/Revenue">
-                                            <span style="color: var(--text-submenu);">
-                                                <i class="fa-solid fa-chart-line me-2"></i>Rapports Financiers
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-page="/Reports/Statistics">
-                                            <span style="color: var(--text-submenu);">
-                                                <i class="fa-solid fa-chart-pie me-2"></i>Statistiques Avancées
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-page="/Employers/Index">
-                                            <span style="color: var(--text-submenu);">
-                                                <i class="fa-solid fa-user-doctor me-2"></i>Staff
-                                            </span>
-                                        </a>
-                                    </li>
+                            @if (User.IsInRole("Admin") || User.IsInRole("Medecin"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" style="color: var(--text-submenu) !important;"  href="#" role="button" data-bs-toggle="dropdown">
+                                        <i class="fa-solid fa-file-waveform"></i>
+                                        <span>Administration</span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="nav-item">
+                                            <a class="nav-link text-dark" asp-page="/Reports/Revenue">
+                                                <span style="color: var(--text-submenu);">
+                                                    <i class="fa-solid fa-chart-line me-2"></i>Rapports Financiers
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-dark" asp-page="/Reports/Statistics">
+                                                <span style="color: var(--text-submenu);">
+                                                    <i class="fa-solid fa-chart-pie me-2"></i>Statistiques Avancées
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-dark" asp-page="/Employers/Index">
+                                                <span style="color: var(--text-submenu);">
+                                                    <i class="fa-solid fa-user-doctor me-2"></i>Staff
+                                                </span>
+                                            </a>
+                                        </li>
 
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-page="/Medicaments/Index">
-                                            <span style="color: var(--text-submenu);">
-                                                <i class="fa-solid fa-pills"></i> Médicaments
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-page="/services/Index">
-                                            <span style="color: var(--text-submenu);">
-                                                <i class="fa-solid fa-hand-holding-medical"></i> Services
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString().Contains("/Stock") == true ? "active" : "")" asp-page="/Stock/Index">
-                                            <span style="color: var(--text-submenu);">
-                                                <i class="fa-solid fa-boxes-stacked me-2"></i> Gestion Stock
-                                            </span>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-dark" asp-page="/Medicaments/Index">
+                                                <span style="color: var(--text-submenu);">
+                                                    <i class="fa-solid fa-pills"></i> Médicaments
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-dark" asp-page="/services/Index">
+                                                <span style="color: var(--text-submenu);">
+                                                    <i class="fa-solid fa-hand-holding-medical"></i> Services
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString().Contains("/Stock") == true ? "active" : "")" asp-page="/Stock/Index">
+                                                <span style="color: var(--text-submenu);">
+                                                    <i class="fa-solid fa-boxes-stacked me-2"></i> Gestion Stock
+                                                </span>
 
-                                            @await Component.InvokeAsync("LowStockCount")
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-page="/Settings/Cabinet">
-                                            <span style="color: var(--text-submenu);">
-                                                <i class="fa-solid fa-hand-holding-medical"></i> Infos Cabinet
-                                            </span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
+                                                @await Component.InvokeAsync("LowStockCount")
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-dark" asp-page="/Settings/Cabinet">
+                                                <span style="color: var(--text-submenu);">
+                                                    <i class="fa-solid fa-hand-holding-medical"></i> Infos Cabinet
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
                         }
                     </ul>
 
@@ -179,3 +183,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+

@@ -1,8 +1,10 @@
 using Cabinet.Data;
 using Cabinet.Models;
+using Cabinet.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cabinet.Pages.Employers
 {
@@ -30,6 +32,17 @@ namespace Cabinet.Pages.Employers
             {
                 return Page();
             }
+
+            var email = Employer.Email.Trim().ToLowerInvariant();
+            var emailExists = await _context.Employer.AnyAsync(e => e.Email != null && e.Email.ToLower() == email);
+            if (emailExists)
+            {
+                ModelState.AddModelError("Employer.Email", "Cet email existe déjà.");
+                return Page();
+            }
+
+            Employer.Email = email;
+            Employer.MotPasse = PasswordSecurity.HashPassword(Employer.MotPasse);
 
             _context.Employer.Add(Employer);
             await _context.SaveChangesAsync();
