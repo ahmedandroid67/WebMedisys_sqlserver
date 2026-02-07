@@ -164,21 +164,20 @@ namespace Cabinet.Pages.Reports
 
         private async Task LoadStatisticsData()
         {
-            CabinetInfo = await _context.CabinetInfo.FirstOrDefaultAsync();
+            CabinetInfo = await _context.CabinetInfo.AsNoTracking().FirstOrDefaultAsync();
 
             var today = DateTime.Today;
             var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
             var firstDayOfYear = new DateTime(today.Year, 1, 1);
 
             // Patient Statistics
-            var allPatients = await _context.Patient.ToListAsync();
+            var allPatients = await _context.Patient.AsNoTracking().ToListAsync();
             TotalPatients = allPatients.Count;
             
-            NewPatientsThisMonth = allPatients.Count(p => p.DateNaiss.HasValue && 
-                p.DateNaiss.Value.Year == today.Year && p.DateNaiss.Value.Month == today.Month);
+            NewPatientsThisMonth = allPatients.Count(p =>
+                p.CreatedAt.Year == today.Year && p.CreatedAt.Month == today.Month);
             
-            NewPatientsThisYear = allPatients.Count(p => p.DateNaiss.HasValue && 
-                p.DateNaiss.Value.Year == today.Year);
+            NewPatientsThisYear = allPatients.Count(p => p.CreatedAt.Year == today.Year);
 
             // Gender distribution
             PatientsByGender = allPatients
@@ -204,7 +203,8 @@ namespace Cabinet.Pages.Reports
 
             // Consultation Statistics
             var consultations = await _context.Consultation
-                .Include(c => c.Patient)
+                .AsNoTracking()
+                .Include(c => c.ServiceEntity)
                 .ToListAsync();
 
             TotalConsultationsToday = consultations.Count(c => c.DateConsultation.HasValue && 
@@ -232,11 +232,15 @@ namespace Cabinet.Pages.Reports
 
             // Top services
             TopServices = consultations
-                .Where(c => !string.IsNullOrEmpty(c.Service))
-                .GroupBy(c => c.Service!)
+                .Where(c => c.ServiceId.HasValue || !string.IsNullOrEmpty(c.Service))
+                .GroupBy(c => new
+                {
+                    c.ServiceId,
+                    Name = c.ServiceEntity != null ? c.ServiceEntity.NomService : c.Service
+                })
                 .Select(g => new ServiceStatDto
                 {
-                    ServiceName = g.Key,
+                    ServiceName = g.Key.Name ?? "Inconnu",
                     Count = g.Count(),
                     Revenue = g.Sum(c => (c.PrixConsul ?? 0) - (c.Remise ?? 0))
                 })
@@ -263,7 +267,7 @@ namespace Cabinet.Pages.Reports
                 : 0;
 
             // Stock Statistics
-            var stockItems = await _context.Stocks.ToListAsync();
+            var stockItems = await _context.Stocks.AsNoTracking().ToListAsync();
             TotalProducts = stockItems.Count;
             LowStockProducts = stockItems.Count(s => s.Quantite <= s.Alarme && s.Quantite > 0);
             OutOfStockProducts = stockItems.Count(s => s.Quantite == 0);

@@ -43,5 +43,11 @@ namespace Cabinet.Models
         [StringLength(15)]
         [RegularExpression(@"^0[5-7]\d{8}$", ErrorMessage = "Format téléphone invalide (ex: 0612345678)")]
         public string? Phone { get; set; }
+
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [Column("updated_at")]
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }

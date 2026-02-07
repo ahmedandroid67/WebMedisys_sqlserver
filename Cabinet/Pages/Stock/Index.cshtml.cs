@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+ï»¿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Cabinet.Data;
@@ -9,12 +9,12 @@ namespace Cabinet.Pages.Stock
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private const int PageSize = 25;
+
         public IndexModel(ApplicationDbContext context) => _context = context;
 
-        public List<Cabinet.Models.Stock> StockList { get; set; } = new();
+        public List<Models.Stock> StockList { get; set; } = new();
         public List<CategoryStock> Categories { get; set; } = new();
-
-        // List to populate the employee dropdown in the movement modal
         public List<Employer> EmployeeOptions { get; set; } = new();
 
         [BindProperty(SupportsGet = true)]
@@ -23,33 +23,59 @@ namespace Cabinet.Pages.Stock
         [BindProperty(SupportsGet = true)]
         public int? CategoryFilter { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public int PageNumber { get; set; } = 1;
+
         [BindProperty]
         public CategoryStock NewCategory { get; set; } = new();
 
+        public int TotalCount { get; set; }
+        public int TotalPages { get; set; }
+
         public async Task OnGetAsync()
         {
-            // Load categories and employees for modals and filters
-            Categories = await _context.CategoryStocks.ToListAsync();
-            EmployeeOptions = await _context.Employer.OrderBy(e => e.Nom).ToListAsync();
+            Categories = await _context.CategoryStocks
+                .AsNoTracking()
+                .OrderBy(c => c.Nom)
+                .ToListAsync();
+
+            EmployeeOptions = await _context.Employer
+                .AsNoTracking()
+                .OrderBy(e => e.Nom)
+                .ToListAsync();
 
             var query = _context.Stocks
+                .AsNoTracking()
                 .Include(s => s.Category)
                 .AsQueryable();
 
-            if (!string.IsNullOrEmpty(SearchString))
+            if (!string.IsNullOrWhiteSpace(SearchString))
+            {
                 query = query.Where(s => s.Nom.Contains(SearchString));
+            }
 
             if (CategoryFilter.HasValue)
-                query = query.Where(s => s.CategoryId == CategoryFilter);
+            {
+                query = query.Where(s => s.CategoryId == CategoryFilter.Value);
+            }
 
-            StockList = await query.ToListAsync();
+            query = query.OrderBy(s => s.Nom);
+
+            TotalCount = await query.CountAsync();
+            TotalPages = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+            PageNumber = Math.Min(Math.Max(1, PageNumber), TotalPages);
+
+            StockList = await query
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
+                .ToListAsync();
         }
 
         public async Task<IActionResult> OnPostAddCategoryAsync()
         {
             if (string.IsNullOrWhiteSpace(NewCategory.Nom))
             {
-                TempData["ErrorMessage"] = "Le nom de la catégorie ne peut pas être vide.";
+                TempData["ErrorMessage"] = "Le nom de la catÃ©gorie ne peut pas Ãªtre vide.";
                 return RedirectToPage();
             }
 
@@ -75,7 +101,7 @@ namespace Cabinet.Pages.Stock
             var hasProducts = await _context.Stocks.AnyAsync(s => s.CategoryId == id);
             if (hasProducts)
             {
-                TempData["ErrorMessage"] = "Impossible de supprimer : cette catégorie contient des produits.";
+                TempData["ErrorMessage"] = "Impossible de supprimer : cette catÃ©gorie contient des produits.";
                 return RedirectToPage();
             }
 
@@ -88,31 +114,27 @@ namespace Cabinet.Pages.Stock
             return RedirectToPage();
         }
 
-        // UNIFIED Handler with Safety Checks
         public async Task<IActionResult> OnPostRecordMovementAsync(int MoveStockId, int MoveQty, string MoveType, string MoveMotif, DateTime MoveDate, int MoveEmployerId)
         {
             var product = await _context.Stocks.FindAsync(MoveStockId);
             if (product == null) return RedirectToPage();
 
-            // Safety Check: Validate quantity for Sortie (Exits)
             if (MoveType == "Sortie" && MoveQty > product.Quantite)
             {
-                TempData["ErrorMessage"] = $"Erreur: Vous essayez de sortir {MoveQty} unités, mais il n'en reste que {product.Quantite} en stock.";
+                TempData["ErrorMessage"] = $"Erreur: Vous essayez de sortir {MoveQty} unitÃ©s, mais il n'en reste que {product.Quantite} en stock.";
                 return RedirectToPage();
             }
 
-            // 1. Create the Movement record with traceability data
             var movement = new StockMovement
             {
                 StockId = MoveStockId,
-                Quantite = (MoveType == "Entrée") ? MoveQty : -MoveQty,
+                Quantite = (MoveType == "EntrÃ©e") ? MoveQty : -MoveQty,
                 Type = MoveType,
                 Motif = MoveMotif,
                 DateMouvement = MoveDate,
                 EmployerId = MoveEmployerId
             };
 
-            // 2. Update current stock level
             product.Quantite += movement.Quantite;
 
             _context.StockMovements.Add(movement);
@@ -121,7 +143,6 @@ namespace Cabinet.Pages.Stock
             return RedirectToPage();
         }
 
-        // Legacy support method for simple +/- buttons if still used
         public async Task<IActionResult> OnPostUpdateStockAsync(int id, int amount, string type)
         {
             var product = await _context.Stocks.FindAsync(id);

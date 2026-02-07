@@ -1,4 +1,4 @@
-using Cabinet.Data;
+﻿using Cabinet.Data;
 using Cabinet.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +11,7 @@ namespace Cabinet.Pages.Patients
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private const int PageSize = 25;
 
         public IndexModel(ApplicationDbContext context)
         {
@@ -19,25 +20,39 @@ namespace Cabinet.Pages.Patients
 
         public IList<Patient> Patients { get; set; } = default!;
 
-        // Search String
         [BindProperty(SupportsGet = true)]
-        public string SearchString { get; set; }
+        public string SearchString { get; set; } = string.Empty;
+
+        [BindProperty(SupportsGet = true)]
+        public int PageNumber { get; set; } = 1;
+
+        public int TotalCount { get; set; }
+        public int TotalPages { get; set; }
 
         public async Task OnGetAsync()
         {
-            var patientsQuery = _context.Patient.AsQueryable();
+            var patientsQuery = _context.Patient.AsNoTracking().AsQueryable();
 
-            if (!string.IsNullOrEmpty(SearchString))
+            if (!string.IsNullOrWhiteSpace(SearchString))
             {
-                // Search by Name, First Name, or CIN
                 patientsQuery = patientsQuery.Where(s =>
-                    s.Nom.Contains(SearchString) ||
-                    s.Prenom.Contains(SearchString) ||
-                    s.Cin.Contains(SearchString));
+                    (s.Nom != null && s.Nom.Contains(SearchString)) ||
+                    (s.Prenom != null && s.Prenom.Contains(SearchString)) ||
+                    (s.Cin != null && s.Cin.Contains(SearchString)));
             }
 
-            // Order by most recently added or by name
-            Patients = await patientsQuery.OrderByDescending(p => p.IdPatient).ToListAsync();
+            patientsQuery = patientsQuery
+                .OrderByDescending(p => p.CreatedAt)
+                .ThenByDescending(p => p.IdPatient);
+
+            TotalCount = await patientsQuery.CountAsync();
+            TotalPages = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+            PageNumber = Math.Min(Math.Max(1, PageNumber), TotalPages);
+
+            Patients = await patientsQuery
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
+                .ToListAsync();
         }
 
         public async Task<IActionResult> OnPostDeleteAsync(int id)

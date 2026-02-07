@@ -1,9 +1,10 @@
-using Cabinet.Data;
+﻿using Cabinet.Data;
 using Cabinet.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace Cabinet.Pages.Consultations
 {
@@ -21,10 +22,10 @@ namespace Cabinet.Pages.Consultations
 
         public SelectList PatientList { get; set; } = default!;
         public SelectList ServiceList { get; set; } = default!;
+        public string ServicePricesJson { get; set; } = "{}";
 
         public async Task<IActionResult> OnGetAsync()
         {
-            // Create 'Now' but set seconds and milliseconds to zero
             var now = DateTime.Now;
             Consultation = new Consultation
             {
@@ -38,6 +39,7 @@ namespace Cabinet.Pages.Consultations
         private async Task LoadData()
         {
             var patients = await _context.Patient
+                .AsNoTracking()
                 .OrderBy(p => p.Nom)
                 .Select(p => new { p.IdPatient, Name = p.Nom + " " + p.Prenom })
                 .ToListAsync();
@@ -45,10 +47,17 @@ namespace Cabinet.Pages.Consultations
             PatientList = new SelectList(patients, "IdPatient", "Name");
 
             var services = await _context.Service
+                .AsNoTracking()
                 .OrderBy(s => s.NomService)
+                .Select(s => new { s.IdService, s.NomService, s.Prix })
                 .ToListAsync();
 
-            ServiceList = new SelectList(services, "Prix", "NomService");
+            ServiceList = new SelectList(services, "IdService", "NomService");
+            ServicePricesJson = JsonSerializer.Serialize(
+                services.ToDictionary(
+                    s => s.IdService.ToString(),
+                    s => s.Prix ?? 0
+                ));
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -59,12 +68,24 @@ namespace Cabinet.Pages.Consultations
                 return Page();
             }
 
-            // 1. Identify service name
-            var selectedPrice = Consultation.PrixConsul;
-            var serviceEntry = await _context.Service.FirstOrDefaultAsync(s => s.Prix == selectedPrice);
-            string serviceName = serviceEntry?.NomService ?? "Inconnu";
+            if (!Consultation.ServiceId.HasValue)
+            {
+                ModelState.AddModelError("Consultation.ServiceId", "Le service est obligatoire.");
+                await LoadData();
+                return Page();
+            }
 
-            // 2. Use user-selected date or fallback to Now
+            var serviceEntry = await _context.Service
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.IdService == Consultation.ServiceId.Value);
+
+            if (serviceEntry == null)
+            {
+                ModelState.AddModelError("Consultation.ServiceId", "Le service sélectionné est introuvable.");
+                await LoadData();
+                return Page();
+            }
+
             if (!Consultation.DateConsultation.HasValue)
             {
                 Consultation.DateConsultation = DateTime.Now;
@@ -72,22 +93,22 @@ namespace Cabinet.Pages.Consultations
 
             var targetedDate = Consultation.DateConsultation.Value.Date;
 
-            // 3. DUPLICATE CHECK: Using the selected date instead of strictly 'Today'
             var exists = await _context.Consultation.AnyAsync(c =>
                 c.PatientId == Consultation.PatientId &&
+                c.DateConsultation.HasValue &&
                 c.DateConsultation.Value.Date == targetedDate &&
-                c.PrixConsul == selectedPrice);
+                c.ServiceId == Consultation.ServiceId);
 
             if (exists)
             {
-                ModelState.AddModelError(string.Empty, $"Erreur : Ce patient a d�j� un dossier pour ce service le {targetedDate:dd/MM/yyyy}.");
+                ModelState.AddModelError(string.Empty, $"Erreur : Ce patient a déjà un dossier pour ce service le {targetedDate:dd/MM/yyyy}.");
                 await LoadData();
                 return Page();
             }
 
-            // 4. Finalize and Save
             Consultation.Etat = "Reception";
-            Consultation.Service = serviceName;
+            Consultation.Service = serviceEntry.NomService;
+            Consultation.PrixConsul = serviceEntry.Prix ?? 0;
 
             _context.Consultation.Add(Consultation);
             await _context.SaveChangesAsync();

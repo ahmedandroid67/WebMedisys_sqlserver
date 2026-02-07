@@ -45,9 +45,10 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-bold text-primary">Service / Acte Médical</label>
-                            <select id="serviceSelect" asp-items="Model.ServiceList" class="form-select">
+                            <select id="serviceSelect" asp-for="Consultation.ServiceId" asp-items="Model.ServiceList" class="form-select">
                                 <option value="0">-- Choisir un service --</option>
                             </select>
+                            <span asp-validation-for="Consultation.ServiceId" class="text-danger small"></span>
                             <small class="text-muted">Sélectionner un acte pour remplir le prix total.</small>
                         </div>
 
@@ -146,6 +147,8 @@
 
     <script>
         $(document).ready(function() {
+            const servicePrices = @Html.Raw(Model.ServicePricesJson);
+
             $('.select2-patient').select2({
                 theme: 'bootstrap-5',
                 placeholder: '-- Rechercher un Patient --',
@@ -153,8 +156,9 @@
             });
 
             $('#serviceSelect').on('change', function() {
-                let price = $(this).val();
-                if (price && price != "0") {
+                const selectedServiceId = $(this).val();
+                const price = servicePrices[selectedServiceId];
+                if (selectedServiceId && selectedServiceId !== "0" && price !== undefined) {
                     $('#totalPrix').val(parseFloat(price).toFixed(2));
                 } else {
                     $('#totalPrix').val("");

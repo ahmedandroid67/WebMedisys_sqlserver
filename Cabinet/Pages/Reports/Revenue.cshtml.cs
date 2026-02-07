@@ -170,7 +170,7 @@ namespace Cabinet.Pages.Reports
                 var net = (consultation.PrixConsul ?? 0) - (consultation.Remise ?? 0);
                 worksheet.Cell($"A{row}").Value = consultation.DateConsultation?.ToString("dd/MM/yyyy HH:mm");
                 worksheet.Cell($"B{row}").Value = $"{consultation.Patient?.Nom} {consultation.Patient?.Prenom}";
-                worksheet.Cell($"C{row}").Value = consultation.Service;
+                worksheet.Cell($"C{row}").Value = consultation.ServiceEntity?.NomService ?? consultation.Service;
                 worksheet.Cell($"D{row}").Value = consultation.PrixConsul ?? 0;
                 worksheet.Cell($"D{row}").Style.NumberFormat.Format = "#,##0.00";
                 worksheet.Cell($"E{row}").Value = consultation.Remise ?? 0;
@@ -193,7 +193,7 @@ namespace Cabinet.Pages.Reports
 
         private async Task LoadRevenueData()
         {
-            CabinetInfo = await _context.CabinetInfo.FirstOrDefaultAsync();
+            CabinetInfo = await _context.CabinetInfo.AsNoTracking().FirstOrDefaultAsync();
 
             // Calculate date range based on period
             var (start, end) = GetDateRange();
@@ -202,7 +202,9 @@ namespace Cabinet.Pages.Reports
 
             // Get consultations in date range
             var consultations = await _context.Consultation
+                .AsNoTracking()
                 .Include(c => c.Patient)
+                .Include(c => c.ServiceEntity)
                 .Where(c => c.DateConsultation.HasValue 
                     && c.DateConsultation.Value.Date >= start.Date 
                     && c.DateConsultation.Value.Date <= end.Date)
@@ -239,11 +241,15 @@ namespace Cabinet.Pages.Reports
 
             // Services breakdown
             ServicesBreakdown = consultations
-                .Where(c => !string.IsNullOrEmpty(c.Service))
-                .GroupBy(c => c.Service!)
+                .Where(c => c.ServiceId.HasValue || !string.IsNullOrEmpty(c.Service))
+                .GroupBy(c => new
+                {
+                    c.ServiceId,
+                    Name = c.ServiceEntity != null ? c.ServiceEntity.NomService : c.Service
+                })
                 .Select(g => new ServiceRevenueDto
                 {
-                    ServiceName = g.Key,
+                    ServiceName = g.Key.Name ?? "Inconnu",
                     Count = g.Count(),
                     TotalRevenue = g.Sum(c => (c.PrixConsul ?? 0) - (c.Remise ?? 0))
                 })

@@ -22,6 +22,12 @@ namespace Cabinet.Models
         [StringLength(100)]
         public string? Service { get; set; }
 
+        [Column("id_service")]
+        public int? ServiceId { get; set; }
+
+        [ForeignKey("ServiceId")]
+        public virtual Service? ServiceEntity { get; set; }
+
         [Column("prix_consul", TypeName = "decimal(18, 2)")]
         public decimal? PrixConsul { get; set; }
 
@@ -98,5 +104,11 @@ namespace Cabinet.Models
         [Column("receipt_number")]
         [StringLength(50)]
         public string? ReceiptNumber { get; set; } // Auto-generated receipt number
+
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [Column("updated_at")]
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }

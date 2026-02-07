@@ -1,4 +1,4 @@
-using Cabinet.Data;
+﻿using Cabinet.Data;
 using Cabinet.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,27 +12,32 @@ namespace Cabinet.Pages.Rendezvous
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private const int PageSize = 25;
 
         public IndexModel(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public IList<Cabinet.Models.Rendezvous> RendezvousList { get; set; } = new List<Cabinet.Models.Rendezvous>();
+        public IList<Models.Rendezvous> RendezvousList { get; set; } = new List<Models.Rendezvous>();
 
         [BindProperty(SupportsGet = true)]
         public string? SearchString { get; set; }
 
-        // Added DateFilter property
         [BindProperty(SupportsGet = true)]
         [DataType(DataType.Date)]
         public DateTime? DateFilter { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public int PageNumber { get; set; } = 1;
+
+        public int TotalCount { get; set; }
+        public int TotalPages { get; set; }
+
         public async Task OnGetAsync()
         {
-            var query = _context.Rendezvous.AsQueryable();
+            var query = _context.Rendezvous.AsNoTracking().AsQueryable();
 
-            // 1. Filter by Name/Phone Search String
             if (!string.IsNullOrWhiteSpace(SearchString))
             {
                 query = query.Where(r =>
@@ -42,14 +47,20 @@ namespace Cabinet.Pages.Rendezvous
                 );
             }
 
-            // 2. Filter by Specific Date
             if (DateFilter.HasValue)
             {
                 query = query.Where(r => r.DateHeure.Date == DateFilter.Value.Date);
             }
 
+            query = query.OrderByDescending(r => r.DateHeure);
+
+            TotalCount = await query.CountAsync();
+            TotalPages = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)PageSize));
+            PageNumber = Math.Min(Math.Max(1, PageNumber), TotalPages);
+
             RendezvousList = await query
-                .OrderByDescending(r => r.DateHeure)
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
                 .ToListAsync();
         }
 

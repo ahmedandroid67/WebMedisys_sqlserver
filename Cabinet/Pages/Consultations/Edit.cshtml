@@ -82,9 +82,10 @@
                     <div class="card-body py-2">
                         <div class="mb-2">
                             <label class="form-label small fw-bold">Service / Acte</label>
-                            <select id="serviceSelect" asp-items="Model.ServiceList" class="form-select form-select-sm">
+                            <select id="serviceSelect" asp-for="Consultation.ServiceId" asp-items="Model.ServiceList" class="form-select form-select-sm">
                                 <option value="0">-- Mettre à jour acte --</option>
                             </select>
+                            <span asp-validation-for="Consultation.ServiceId" class="text-danger small"></span>
                         </div>
                         <div class="row g-2">
                             <div class="col-6">
@@ -109,7 +110,7 @@
                                     <tr class="history-row border-bottom" data-id="@h.IdConsultation">
                                         <td class="ps-3 py-2">
                                             <div class="fw-bold small text-dark">@h.DateConsultation?.ToString("dd/MM/yyyy")</div>
-                                            <div class="text-muted" style="font-size: 0.75rem;">@h.Service</div>
+                                            <div class="text-muted" style="font-size: 0.75rem;">@(h.ServiceEntity?.NomService ?? h.Service)</div>
                                         </td>
                                         <td class="text-end pe-3 align-middle">
                                             <i class="bi bi-chevron-right text-muted"></i>
@@ -186,6 +187,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
+            const servicePrices = @Html.Raw(Model.ServicePricesJson);
             $('.select2-med').select2({ theme: 'bootstrap-5', width: '100%' });
 
             // History Loading AJAX
@@ -232,8 +234,11 @@
 
             // IMC and Service logic remains same...
             $('#serviceSelect').on('change', function() {
-                let price = $(this).val();
-                if (price && price != "0") $('#totalPrix').val(parseFloat(price).toFixed(2));
+                const selectedServiceId = $(this).val();
+                const price = servicePrices[selectedServiceId];
+                if (selectedServiceId && selectedServiceId !== "0" && price !== undefined) {
+                    $('#totalPrix').val(parseFloat(price).toFixed(2));
+                }
             });
             $('#poids, #taille').on('input', function() {
                 let p = parseFloat($('#poids').val()), t = parseFloat($('#taille').val()) / 100;

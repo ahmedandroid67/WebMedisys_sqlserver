@@ -43,6 +43,12 @@ namespace Cabinet.Models
         [StringLength(255)]
         public string? Adresse { get; set; }
 
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [Column("updated_at")]
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
         // Navigation Properties (Links to other tables)
         public virtual ICollection<Consultation> Consultations { get; set; } = new List<Consultation>();
         public virtual ICollection<Ordonnance> Ordonnances { get; set; } = new List<Ordonnance>();

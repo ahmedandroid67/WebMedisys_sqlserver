@@ -1,4 +1,4 @@
-using Cabinet.Data;
+﻿using Cabinet.Data;
 using Cabinet.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +19,9 @@ namespace Cabinet.Pages.Consultations
             _context = context;
         }
 
-        public IList<Cabinet.Models.Consultation> Consultations { get; set; } = new List<Cabinet.Models.Consultation>();
+        private const int DefaultPageSize = 25;
+
+        public IList<Consultation> Consultations { get; set; } = new List<Consultation>();
         public SelectList ServiceList { get; set; } = default!;
 
         [BindProperty(SupportsGet = true)]
@@ -30,54 +32,65 @@ namespace Cabinet.Pages.Consultations
         public DateTime? DateFilter { get; set; }
 
         [BindProperty(SupportsGet = true)]
-        public string? ServiceFilter { get; set; }
+        public int? ServiceFilter { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public bool ShowAll { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public int PageNumber { get; set; } = 1;
+
+        public int TotalCount { get; set; }
+        public int TotalPages { get; set; }
+
         public async Task OnGetAsync()
         {
-            // Load Services for the dropdown
-            var services = await _context.Service.OrderBy(s => s.NomService).ToListAsync();
-            ServiceList = new SelectList(services, "NomService", "NomService");
+            var services = await _context.Service
+                .AsNoTracking()
+                .OrderBy(s => s.NomService)
+                .Select(s => new { s.IdService, s.NomService })
+                .ToListAsync();
+            ServiceList = new SelectList(services, "IdService", "NomService", ServiceFilter);
 
             var query = _context.Consultation
+                .AsNoTracking()
                 .Include(c => c.Patient)
+                .Include(c => c.ServiceEntity)
                 .AsQueryable();
 
-            // 1. Filter by Search String (Name/Etat)
-            if (!string.IsNullOrEmpty(SearchString))
+            if (!string.IsNullOrWhiteSpace(SearchString))
             {
                 query = query.Where(c =>
-                    (c.Patient != null && c.Patient.Nom.Contains(SearchString)) ||
-                    (c.Patient != null && c.Patient.Prenom.Contains(SearchString)) ||
+                    (c.Patient != null && c.Patient.Nom != null && c.Patient.Nom.Contains(SearchString)) ||
+                    (c.Patient != null && c.Patient.Prenom != null && c.Patient.Prenom.Contains(SearchString)) ||
                     (c.Etat != null && c.Etat.Contains(SearchString))
                 );
             }
 
-            // 2. Filter by Date
             if (DateFilter.HasValue)
             {
                 query = query.Where(c => c.DateConsultation.HasValue && c.DateConsultation.Value.Date == DateFilter.Value.Date);
             }
-            else if (!ShowAll && string.IsNullOrEmpty(SearchString) && string.IsNullOrEmpty(ServiceFilter))
+            else if (!ShowAll && string.IsNullOrWhiteSpace(SearchString) && !ServiceFilter.HasValue)
             {
-                // Default to Today if ShowAll is not checked and no specific search is performed
                 query = query.Where(c => c.DateConsultation.HasValue && c.DateConsultation.Value.Date == DateTime.Today);
             }
 
-            // 3. Filter by Service
-            if (!string.IsNullOrEmpty(ServiceFilter))
+            if (ServiceFilter.HasValue)
             {
-                query = query.Where(c => c.Service == ServiceFilter);
+                query = query.Where(c => c.ServiceId == ServiceFilter.Value);
             }
 
-            // 4. Order and limit
             query = query.OrderByDescending(c => c.DateConsultation);
-            
-            // If ShowAll is checked, take more records (e.g., 200), otherwise limit to 50
+
+            TotalCount = await query.CountAsync();
+            var pageSize = ShowAll ? 200 : DefaultPageSize;
+            TotalPages = Math.Max(1, (int)Math.Ceiling(TotalCount / (double)pageSize));
+            PageNumber = Math.Min(Math.Max(1, PageNumber), TotalPages);
+
             Consultations = await query
-                .Take(ShowAll ? 200 : 50)
+                .Skip((PageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
         }
 
