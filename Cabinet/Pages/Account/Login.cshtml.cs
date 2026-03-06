@@ -39,6 +39,8 @@ namespace Cabinet.Pages.Account
             [Required(ErrorMessage = "Le mot de passe est requis")]
             [DataType(DataType.Password)]
             public string Password { get; set; } = string.Empty;
+
+            public bool RememberMe { get; set; }
         }
 
         public void OnGet() { }
@@ -77,9 +79,13 @@ namespace Cabinet.Pages.Account
             if (needsRehash)
             {
                 user.MotPasse = PasswordSecurity.HashPassword(Input.Password);
-                await _context.SaveChangesAsync();
                 _logger.LogInformation("Legacy password upgraded to hashed for user {Email}.", user.Email);
             }
+
+            // Improvement 8: record last login timestamp
+            user.LastLogin = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
 
             ClearFailedAttempts(email);
 
@@ -89,7 +95,9 @@ namespace Cabinet.Pages.Account
                 new Claim(ClaimTypes.Name, user.Email),
                 // This creates the "FullName" claim used in your _Layout.cshtml
                 new Claim("FullName", $"{user.Nom} {user.Prenom}"),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Role, user.Role),
+                // Controls Administration menu visibility
+                new Claim("CanAccessAdmin", user.CanAccessAdmin.ToString())
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -100,7 +108,7 @@ namespace Cabinet.Pages.Account
                 new ClaimsPrincipal(claimsIdentity),
                 new AuthenticationProperties
                 {
-                    IsPersistent = true // Keeps the session active after closing the browser
+                    IsPersistent = Input.RememberMe
                 });
 
             return RedirectToPage("/Index");

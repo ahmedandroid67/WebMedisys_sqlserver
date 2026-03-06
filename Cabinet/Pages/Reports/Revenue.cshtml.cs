@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ClosedXML.Excel;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace Cabinet.Pages.Reports
 {
@@ -191,6 +194,119 @@ namespace Cabinet.Pages.Reports
             return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         }
 
+        // Improvement 7: PDF Export using QuestPDF
+        public async Task<IActionResult> OnGetExportPdfAsync(string period = "today", DateTime? startDate = null, DateTime? endDate = null)
+        {
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            Period = period;
+            StartDate = startDate;
+            EndDate = endDate;
+            await LoadRevenueData();
+
+            var pdf = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(30);
+                    page.DefaultTextStyle(x => x.FontSize(10).FontFamily("Arial"));
+
+                    // Header
+                    page.Header().Column(col =>
+                    {
+                        col.Item().Row(row =>
+                        {
+                            row.RelativeItem().Column(inner =>
+                            {
+                                inner.Item().Text(CabinetInfo?.DrName ?? "Cabinet Médical").Bold().FontSize(16).FontColor(Colors.Indigo.Darken2);
+                                inner.Item().Text(CabinetInfo?.Speciality ?? "").FontSize(11).FontColor(Colors.Grey.Darken1);
+                                inner.Item().Text(CabinetInfo?.Address ?? "").FontSize(9).FontColor(Colors.Grey.Medium);
+                            });
+                            row.ConstantItem(130).Column(inner =>
+                            {
+                                inner.Item().AlignRight().Text("RAPPORT DE REVENUS").Bold().FontSize(12).FontColor(Colors.Indigo.Darken2);
+                                inner.Item().AlignRight().Text($"Du {StartDate:dd/MM/yyyy} au {EndDate:dd/MM/yyyy}").FontSize(9).FontColor(Colors.Grey.Darken1);
+                            });
+                        });
+                        col.Item().PaddingTop(6).LineHorizontal(1).LineColor(Colors.Indigo.Lighten3);
+                    });
+
+                    page.Content().PaddingTop(16).Column(col =>
+                    {
+                        // KPI Summary
+                        col.Item().Text("Résumé Financier").Bold().FontSize(12).FontColor(Colors.Indigo.Darken1);
+                        col.Item().PaddingTop(6).Table(table =>
+                        {
+                            table.ColumnsDefinition(c => { c.RelativeColumn(3); c.RelativeColumn(2); });
+                            void Row(string label, string value, bool bold = false)
+                            {
+                                table.Cell().Padding(5).Text(label).FontColor(bold ? Colors.Black : Colors.Grey.Darken2);
+                                table.Cell().Padding(5).AlignRight().Text(value).Bold();
+                            }
+                            Row("Revenu Total", $"{TotalRevenue:N2} DH");
+                            Row("Total Remises", $"-{TotalDiscounts:N2} DH");
+                            Row("Revenu Net", $"{NetRevenue:N2} DH", true);
+                            Row("Consultations", TotalConsultations.ToString());
+                            Row("Moyenne / Consultation", $"{AverageConsultation:N2} DH");
+                        });
+
+                        col.Item().PaddingTop(16).Text("Répartition par Service").Bold().FontSize(12).FontColor(Colors.Indigo.Darken1);
+                        col.Item().PaddingTop(6).Table(table =>
+                        {
+                            table.ColumnsDefinition(c => { c.RelativeColumn(4); c.RelativeColumn(1); c.RelativeColumn(2); });
+                            table.Header(h =>
+                            {
+                                h.Cell().Background(Colors.Indigo.Lighten4).Padding(5).Text("Service").Bold();
+                                h.Cell().Background(Colors.Indigo.Lighten4).Padding(5).AlignCenter().Text("Nb.").Bold();
+                                h.Cell().Background(Colors.Indigo.Lighten4).Padding(5).AlignRight().Text("Revenu").Bold();
+                            });
+                            foreach (var s in ServicesBreakdown)
+                            {
+                                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(5).Text(s.ServiceName);
+                                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(5).AlignCenter().Text(s.Count.ToString());
+                                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(5).AlignRight().Text($"{s.TotalRevenue:N2} DH");
+                            }
+                        });
+
+                        col.Item().PaddingTop(16).Text("Détail des Consultations").Bold().FontSize(12).FontColor(Colors.Indigo.Darken1);
+                        col.Item().PaddingTop(6).Table(table =>
+                        {
+                            table.ColumnsDefinition(c => { c.ConstantColumn(60); c.RelativeColumn(3); c.RelativeColumn(2); c.ConstantColumn(55); c.ConstantColumn(50); c.ConstantColumn(60); });
+                            table.Header(h =>
+                            {
+                                foreach (var label in new[] { "Date", "Patient", "Service", "Prix", "Remise", "Net" })
+                                    h.Cell().Background(Colors.Grey.Lighten3).Padding(4).Text(label).Bold().FontSize(9);
+                            });
+                            foreach (var c in DetailedConsultations)
+                            {
+                                var net = (c.PrixConsul ?? 0) - (c.Remise ?? 0);
+                                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(c.DateConsultation?.ToString("dd/MM/yy")).FontSize(9);
+                                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text($"{c.Patient?.Nom} {c.Patient?.Prenom}").FontSize(9);
+                                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).Text(c.ServiceEntity?.NomService ?? c.Service ?? "").FontSize(9);
+                                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).AlignRight().Text($"{c.PrixConsul ?? 0:N0}").FontSize(9);
+                                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).AlignRight().Text($"{c.Remise ?? 0:N0}").FontSize(9);
+                                table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).Padding(4).AlignRight().Text($"{net:N0}").FontSize(9).Bold();
+                            }
+                        });
+                    });
+
+                    page.Footer().AlignCenter().Text(t =>
+                    {
+                        t.Span("Page ");
+                        t.CurrentPageNumber();
+                        t.Span(" / ");
+                        t.TotalPages();
+                        t.Span($"  —  Généré le {DateTime.Now:dd/MM/yyyy HH:mm}").FontColor(Colors.Grey.Medium);
+                    });
+                });
+            });
+
+            var pdfBytes = pdf.GeneratePdf();
+            var fileName = $"Revenue_{StartDate:yyyyMMdd}_{EndDate:yyyyMMdd}.pdf";
+            return File(pdfBytes, "application/pdf", fileName);
+        }
+
         private async Task LoadRevenueData()
         {
             CabinetInfo = await _context.CabinetInfo.AsNoTracking().FirstOrDefaultAsync();
@@ -276,7 +392,7 @@ namespace Cabinet.Pages.Reports
             return Period switch
             {
                 "today" => (today, today),
-                "week" => (today.AddDays(-(int)today.DayOfWeek), today),
+                "week" => (today.AddDays(-(((int)today.DayOfWeek + 6) % 7)), today),
                 "month" => (new DateTime(today.Year, today.Month, 1), today),
                 "year" => (new DateTime(today.Year, 1, 1), today),
                 "custom" when StartDate.HasValue && EndDate.HasValue => (StartDate.Value, EndDate.Value),

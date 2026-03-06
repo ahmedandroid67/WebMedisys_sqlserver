@@ -107,7 +107,8 @@ namespace Cabinet.Pages.Consultations
 
                     if (hasPrescription)
                     {
-                        TempData["ErrorMessage"] = "Suppression impossible: cette consultation possède une ordonnance associée.";
+                        TempData["ErrorMessage"] = "Suppression impossible: cette consultation possède une ordonnance associée. Utilisez \"Supprimer tout\" pour supprimer la consultation et son ordonnance ensemble.";
+                        TempData["BlockedId"] = id;
                         return RedirectToPage("./Index");
                     }
                 }
@@ -115,6 +116,35 @@ namespace Cabinet.Pages.Consultations
                 _context.Consultation.Remove(consultation);
                 await _context.SaveChangesAsync();
             }
+            return RedirectToPage("./Index");
+        }
+
+        // Bug 6 fix: cascade delete — removes prescription first, then the consultation
+        public async Task<IActionResult> OnPostForceDeleteAsync(int id)
+        {
+            var consultation = await _context.Consultation.FindAsync(id);
+            if (consultation == null) return RedirectToPage("./Index");
+
+            if (consultation.PatientId.HasValue && consultation.DateConsultation.HasValue)
+            {
+                var ordonnance = await _context.Ordonnance
+                    .FirstOrDefaultAsync(o =>
+                        o.PatientID == consultation.PatientId.Value &&
+                        o.DatePrescription.Date == consultation.DateConsultation.Value.Date);
+
+                if (ordonnance != null)
+                {
+                    var medications = _context.OrdonnanceMedicament
+                        .Where(om => om.OrdonnanceID == ordonnance.OrdonnanceID);
+                    _context.OrdonnanceMedicament.RemoveRange(medications);
+                    _context.Ordonnance.Remove(ordonnance);
+                }
+            }
+
+            _context.Consultation.Remove(consultation);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Consultation et ordonnance supprimées avec succès.";
             return RedirectToPage("./Index");
         }
     }

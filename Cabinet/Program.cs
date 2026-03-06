@@ -19,6 +19,7 @@ builder.Services.AddRazorPages(options =>
 
     // If you have a specific Login page that must be public:
     options.Conventions.AllowAnonymousToPage("/Account/Login");
+    options.Conventions.AllowAnonymousToPage("/Account/AccessDenied");
 });
 
 builder.Services.AddMemoryCache();
@@ -36,12 +37,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddCookie(options =>
     {
         options.LoginPath = "/Account/Login"; // Correct path to your folder
-        options.AccessDeniedPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
         options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         options.SlidingExpiration = true;
         options.Cookie.HttpOnly = true;
         options.Cookie.SameSite = SameSiteMode.Lax;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        // Bug 1 fix: Always in production, SameAsRequest in development (HTTP)
+        options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+            ? CookieSecurePolicy.SameAsRequest
+            : CookieSecurePolicy.Always;
     });
 
 var app = builder.Build();
@@ -51,6 +55,15 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
+
+// Ensure the application uses French culture for dates, numbers, etc. globally.
+var supportedCultures = new[] { "fr-FR" };
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture(supportedCultures[0])
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+
+app.UseRequestLocalization(localizationOptions);
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

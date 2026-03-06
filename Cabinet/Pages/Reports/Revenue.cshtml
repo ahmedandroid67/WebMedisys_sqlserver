@@ -146,6 +146,13 @@
                class="btn btn-success">
                 <i class="fa-solid fa-file-excel me-2"></i>Export Excel
             </a>
+            <a asp-page-handler="ExportPdf"
+               asp-route-period="@Model.Period"
+               asp-route-startDate="@Model.StartDate?.ToString("yyyy-MM-dd")"
+               asp-route-endDate="@Model.EndDate?.ToString("yyyy-MM-dd")"
+               class="btn btn-danger">
+                <i class="fa-solid fa-file-pdf me-2"></i>Export PDF
+            </a>
             <button class="btn btn-outline-primary" onclick="window.print()">
                 <i class="fa-solid fa-print me-2"></i>Imprimer
             </button>

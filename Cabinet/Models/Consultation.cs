@@ -35,16 +35,16 @@ namespace Cabinet.Models
         public decimal? Remise { get; set; }
 
         // --- Medical Notes (Tab: Remarques) ---
-        [Column("signe")]
-        [StringLength(250)]
+        [Column("signe", TypeName = "nvarchar(MAX)")]
+        [StringLength(2000)]
         public string? Signe { get; set; }
 
-        [Column("diagnostique")]
-        [StringLength(250)]
+        [Column("diagnostique", TypeName = "nvarchar(MAX)")]
+        [StringLength(2000)]
         public string? Diagnostique { get; set; }
 
-        [Column("conduite")]
-        [StringLength(250)]
+        [Column("conduite", TypeName = "nvarchar(MAX)")]
+        [StringLength(2000)]
         public string? Conduite { get; set; }
 
 
@@ -62,7 +62,7 @@ namespace Cabinet.Models
 
         // --- Workflow ---
         [Column("date_consultation")]
-        public DateTime? DateConsultation { get; set; } = DateTime.Now;
+        public DateTime? DateConsultation { get; set; } = DateTime.UtcNow;
 
         [Column("etat")]
         [StringLength(20)]

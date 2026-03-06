@@ -177,6 +177,58 @@
         </div>
     </div>
 
+    <!-- Improvement 5: Appointment Completion Rate -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card stat-card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold mb-1">
+                                <i class="fa-solid fa-calendar-check text-success me-1"></i>
+                                Taux de Complétion RDV — Aujourd'hui
+                            </div>
+                            <div class="stat-number text-dark">@Model.CompletionRateToday<small class="fs-4">%</small></div>
+                            <small class="text-muted">@Model.RdvCompletedToday consultations terminées / @Model.RdvTotalToday RDV planifiés</small>
+                        </div>
+                        <span class="badge rounded-pill fs-6 px-3 py-2
+                            @(Model.CompletionRateToday >= 70 ? "bg-success" : Model.CompletionRateToday >= 40 ? "bg-warning" : "bg-danger")">
+                            @(Model.RdvTotalToday == 0 ? "N/A" : Model.CompletionRateToday + "%")
+                        </span>
+                    </div>
+                    <div class="progress" style="height:10px; border-radius:8px;">
+                        <div class="progress-bar @(Model.CompletionRateToday >= 70 ? "bg-success" : Model.CompletionRateToday >= 40 ? "bg-warning" : "bg-danger")"
+                             role="progressbar" style="width: @Model.CompletionRateToday%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card stat-card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold mb-1">
+                                <i class="fa-solid fa-calendar-check text-primary me-1"></i>
+                                Taux de Complétion RDV — Ce Mois
+                            </div>
+                            <div class="stat-number text-dark">@Model.CompletionRateThisMonth<small class="fs-4">%</small></div>
+                            <small class="text-muted">@Model.RdvCompletedThisMonth terminées / @Model.RdvTotalThisMonth RDV planifiés</small>
+                        </div>
+                        <span class="badge rounded-pill fs-6 px-3 py-2
+                            @(Model.CompletionRateThisMonth >= 70 ? "bg-success" : Model.CompletionRateThisMonth >= 40 ? "bg-warning" : "bg-danger")">
+                            @(Model.RdvTotalThisMonth == 0 ? "N/A" : Model.CompletionRateThisMonth + "%")
+                        </span>
+                    </div>
+                    <div class="progress" style="height:10px; border-radius:8px;">
+                        <div class="progress-bar @(Model.CompletionRateThisMonth >= 70 ? "bg-success" : Model.CompletionRateThisMonth >= 40 ? "bg-warning" : "bg-danger")"
+                             role="progressbar" style="width: @Model.CompletionRateThisMonth%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Charts Row 1 -->
     <div class="row mb-4">
         <!-- Consultations Trend -->

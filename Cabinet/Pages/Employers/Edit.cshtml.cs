@@ -78,6 +78,7 @@ namespace Cabinet.Pages.Employers
             existing.Fonction = Employer.Fonction;
             existing.Telephone = Employer.Telephone;
             existing.Adresse = Employer.Adresse;
+            existing.CanAccessAdmin = Employer.CanAccessAdmin;
 
             if (changingPassword)
             {

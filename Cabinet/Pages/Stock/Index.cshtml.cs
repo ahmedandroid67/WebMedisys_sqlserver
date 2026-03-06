@@ -79,6 +79,16 @@ namespace Cabinet.Pages.Stock
                 return RedirectToPage();
             }
 
+            // Bug 10 fix: prevent duplicate category names
+            var exists = await _context.CategoryStocks
+                .AnyAsync(c => c.Nom == NewCategory.Nom.Trim());
+            if (exists)
+            {
+                TempData["ErrorMessage"] = $"La catégorie '{NewCategory.Nom}' existe déjà.";
+                return RedirectToPage();
+            }
+
+            NewCategory.Nom = NewCategory.Nom.Trim();
             _context.CategoryStocks.Add(NewCategory);
             await _context.SaveChangesAsync();
 
@@ -143,17 +153,5 @@ namespace Cabinet.Pages.Stock
             return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostUpdateStockAsync(int id, int amount, string type)
-        {
-            var product = await _context.Stocks.FindAsync(id);
-            if (product != null)
-            {
-                if (type == "in") product.Quantite += amount;
-                else if (type == "out") product.Quantite = Math.Max(0, product.Quantite - amount);
-
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToPage();
-        }
     }
 }

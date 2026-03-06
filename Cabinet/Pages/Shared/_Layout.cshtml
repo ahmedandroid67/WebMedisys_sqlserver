@@ -48,7 +48,7 @@
                                 </a>
                             </li>
 
-                            @if (User.IsInRole("Admin") || User.IsInRole("Medecin"))
+                            @if (User.FindFirst("CanAccessAdmin")?.Value == "True")
                             {
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" style="color: var(--text-submenu) !important;"  href="#" role="button" data-bs-toggle="dropdown">
@@ -133,10 +133,16 @@
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
                             var fullName = User.FindFirst("FullName")?.Value ?? User.Identity.Name;
+                            var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "";
+                            var roleBadgeClass = userRole == "Admin" ? "bg-purple" : userRole == "Medecin" ? "bg-primary" : "bg-secondary";
 
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle fw-bold" style="color: var(--text-submenu) !important;"  href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fa-solid fa-user-doctor text-primary"></i> @fullName
+                                <a class="nav-link dropdown-toggle fw-bold" style="color: var(--text-submenu) !important; line-height: 1.1;" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-user-doctor text-primary"></i>
+                                    <span class="d-inline-flex flex-column align-items-start ms-1">
+                                        <span>@fullName</span>
+                                        <span class="badge @roleBadgeClass" style="font-size: 0.65rem; font-weight: 600; padding: 2px 7px; border-radius: 20px; opacity: 0.9;">@userRole</span>
+                                    </span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown">
                                     <li>
@@ -149,6 +155,7 @@
                                     </li>
                                 </ul>
                             </li>
+
                         }
                         else
                         {

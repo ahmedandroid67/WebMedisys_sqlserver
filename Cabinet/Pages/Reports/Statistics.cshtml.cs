@@ -43,7 +43,15 @@ namespace Cabinet.Pages.Reports
         public decimal RevenueThisMonth { get; set; }
         public decimal RevenueThisYear { get; set; }
         public decimal AverageConsultationPrice { get; set; }
-        
+
+        // Improvement 5: Appointment Completion Rate
+        public int RdvTotalToday { get; set; }
+        public int RdvCompletedToday { get; set; }
+        public int RdvTotalThisMonth { get; set; }
+        public int RdvCompletedThisMonth { get; set; }
+        public double CompletionRateToday => RdvTotalToday == 0 ? 0 : Math.Round((double)RdvCompletedToday / RdvTotalToday * 100, 1);
+        public double CompletionRateThisMonth => RdvTotalThisMonth == 0 ? 0 : Math.Round((double)RdvCompletedThisMonth / RdvTotalThisMonth * 100, 1);
+
         public CabinetInfo? CabinetInfo { get; set; }
 
         public async Task OnGetAsync()
@@ -283,6 +291,25 @@ namespace Cabinet.Pages.Reports
                     AlertLevel = s.Alarme
                 })
                 .ToList();
+
+            // Improvement 5: Appointment Completion Rate
+            var allRdv = await _context.Rendezvous.AsNoTracking().ToListAsync();
+            var allConsultDates = consultations
+                .Where(c => c.PatientId.HasValue && c.DateConsultation.HasValue)
+                .Select(c => c.DateConsultation!.Value.Date)
+                .ToHashSet();
+
+            RdvTotalToday = allRdv.Count(r => r.DateHeure.Date == today);
+            RdvCompletedToday = consultations.Count(c =>
+                c.DateConsultation.HasValue &&
+                c.DateConsultation.Value.Date == today &&
+                c.Etat == "Terminer");
+
+            RdvTotalThisMonth = allRdv.Count(r => r.DateHeure >= firstDayOfMonth);
+            RdvCompletedThisMonth = consultations.Count(c =>
+                c.DateConsultation.HasValue &&
+                c.DateConsultation.Value >= firstDayOfMonth &&
+                c.Etat == "Terminer");
         }
     }
 

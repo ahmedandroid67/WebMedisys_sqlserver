@@ -37,5 +37,13 @@ namespace Cabinet.Models
         public string? Fonction { get; set; }
         public string? Telephone { get; set; }
         public string? Adresse { get; set; }
+
+        // Improvement 8: track last login timestamp
+        [Column("last_login")]
+        public DateTime? LastLogin { get; set; }
+
+        // Controls visibility of the Administration menu
+        [Column("can_access_admin")]
+        public bool CanAccessAdmin { get; set; } = false;
     }
 }

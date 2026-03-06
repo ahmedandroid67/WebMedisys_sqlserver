@@ -1,6 +1,7 @@
 using Cabinet.Data;
 using Cabinet.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,11 +44,12 @@ namespace Cabinet.Pages
                 .Where(c => c.DateConsultation.HasValue && c.DateConsultation.Value.Date == today)
                 .SumAsync(c => (c.PrixConsul ?? 0) - (c.Remise ?? 0));
 
-            // 2. Fetch the Waiting List (Include Patient names)
-            // Note: Ensure "Etat" matches your exact string values ("Reception" / "Visite")
+            // 2. Fetch the Waiting List (today only — Bug 4 fix)
             WaitingList = await _context.Consultation
                 .Include(c => c.Patient)
-                .Where(c => c.Etat == "Reception" || c.Etat == "Visite")
+                .Where(c => c.DateConsultation.HasValue
+                    && c.DateConsultation.Value.Date == today
+                    && (c.Etat == "Reception" || c.Etat == "Visite"))
                 .OrderBy(c => c.DateConsultation)
                 .ToListAsync();
 
@@ -64,6 +66,32 @@ namespace Cabinet.Pages
                 .OrderBy(s => s.Quantite)
                 .Take(5)
                 .ToListAsync();
+        }
+
+        // Improvement 4: advance Reception → Visite with one click
+        public async Task<IActionResult> OnPostAdvanceStatusAsync(int id)
+        {
+            var consultation = await _context.Consultation.FindAsync(id);
+            if (consultation != null && consultation.Etat == "Reception")
+            {
+                consultation.Etat = "Visite";
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"Patient passé en visite.";
+            }
+            return RedirectToPage();
+        }
+
+        // Improvement 4: mark consultation as Terminer with one click
+        public async Task<IActionResult> OnPostTerminerAsync(int id)
+        {
+            var consultation = await _context.Consultation.FindAsync(id);
+            if (consultation != null && (consultation.Etat == "Reception" || consultation.Etat == "Visite"))
+            {
+                consultation.Etat = "Terminer";
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Consultation terminée avec succès.";
+            }
+            return RedirectToPage();
         }
     }
 }

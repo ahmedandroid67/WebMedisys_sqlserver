@@ -63,7 +63,7 @@
                         </div>
                     </div>
 
-                    <h5 class="text-muted border-bottom pb-2 mt-4 mb-3"><i class="fa-solid fa-shield-halved me-2"></i>Accès & Contact</h5>
+                    <h5 class="text-muted border-bottom pb-2 mt-4 mb-3"><i class="fa-solid fa-shield-halved me-2"></i>Accès &amp; Contact</h5>
 
                     <div class="row">
                         <div class="col-md-12 mb-3">
@@ -110,6 +110,24 @@
                         <div class="input-group">
                             <span class="input-group-text"><i class="fa-solid fa-map-location-dot text-muted"></i></span>
                             <textarea asp-for="Employer.Adresse" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+
+                    @* Administration Access Toggle *@
+                    <div class="mb-4 p-3 rounded-3" style="background: #eef2ff; border: 1.5px solid #c7d2fe;">
+                        <div class="form-check form-switch d-flex align-items-start gap-3">
+                            <input class="form-check-input mt-1" type="checkbox" role="switch"
+                                   asp-for="Employer.CanAccessAdmin" id="canAccessAdminEdit"
+                                   style="width: 2.5em; height: 1.3em; cursor: pointer; flex-shrink: 0;" />
+                            <label class="form-check-label mb-0" for="canAccessAdminEdit">
+                                <span class="fw-bold text-primary">
+                                    <i class="fa-solid fa-shield-halved me-2"></i>Accès au Menu Administration
+                                </span>
+                                <div class="small text-muted mt-1">
+                                    Si activé, cet employé verra le menu <strong>Administration</strong> dans la barre de navigation
+                                    (Rapports, Statistiques, Staff, Médicaments, Services, Stock, Paramètres).
+                                </div>
+                            </label>
                         </div>
                     </div>
 

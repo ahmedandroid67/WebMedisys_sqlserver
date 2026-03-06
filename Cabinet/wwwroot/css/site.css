@@ -217,6 +217,17 @@ body {
         background-color: var(--hover-strong-bg);
     }
 
+/* Bootstrap-missing purple badge */
+.bg-purple {
+    background-color: #7c3aed !important;
+    color: #fff;
+}
+
+/* Align the user icon vertically with the stacked name+badge column */
+#userDropdown i.fa-user-doctor {
+    vertical-align: middle;
+}
+
 /* ============================================
    THEME TOGGLE BUTTON
    ============================================ */

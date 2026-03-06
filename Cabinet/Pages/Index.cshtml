@@ -93,7 +93,33 @@
             font-weight: 600;
             color: #1e293b;
         }
+
+        .toast-success {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            z-index: 1090;
+            min-width: 320px;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(16,185,129,0.25);
+            animation: slideInRight 0.35s ease;
+        }
+
+        @@keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
     </style>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="toast-success alert alert-success alert-dismissible fade show d-flex align-items-center gap-2" role="alert" id="successToast">
+        <i class="fa-solid fa-circle-check fa-lg"></i>
+        <span>@TempData["SuccessMessage"]</span>
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+    </div>
+    <script>setTimeout(() => { const t = document.getElementById('successToast'); if(t) t.classList.remove('show'); }, 4000);</script>
 }
 
 <div class="container-fluid px-4">
@@ -110,7 +136,11 @@
         <div class="text-end d-none d-md-block">
             <span class="badge bg-light text-dark border rounded-pill px-4 py-2 fw-bold shadow-sm">
                 <i class="fa-regular fa-calendar-check me-2 text-primary"></i>
-                @DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                @{
+                    var dateStr = DateTime.Now.ToString("dddd, dd MMMM yyyy");
+                    dateStr = char.ToUpper(dateStr[0]) + dateStr.Substring(1);
+                }
+                @dateStr
             </span>
         </div>
     </div>
@@ -187,9 +217,27 @@
                                         }
                                     </td>
                                     <td class="text-end pe-4">
-                                        <a asp-page="/Consultations/Edit" asp-route-id="@c.IdConsultation" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm fw-bold">
-                                            Ouvrir Dossier
-                                        </a>
+                                        <div class="d-flex gap-2 justify-content-end flex-wrap">
+                                            @if (c.Etat == "Reception")
+                                            {
+                                                <form method="post" asp-page-handler="AdvanceStatus" asp-route-id="@c.IdConsultation">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 fw-bold shadow-sm" title="Passer en Visite">
+                                                        <i class="fa-solid fa-user-doctor me-1"></i>En Visite
+                                                    </button>
+                                                </form>
+                                            }
+                                            <form method="post" asp-page-handler="Terminer" asp-route-id="@c.IdConsultation"
+                                                  onsubmit="return confirm('Marquer cette consultation comme terminée ?');">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm @(c.Etat == "Reception" ? "btn-outline-secondary" : "btn-danger") rounded-pill px-3 fw-bold shadow-sm" title="Terminer">
+                                                    <i class="fa-solid fa-circle-check me-1"></i>Terminer
+                                                </button>
+                                            </form>
+                                            <a asp-page="/Consultations/Edit" asp-route-id="@c.IdConsultation" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold shadow-sm" title="Ouvrir le dossier">
+                                                <i class="fa-solid fa-folder-open me-1"></i>Dossier
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             }
