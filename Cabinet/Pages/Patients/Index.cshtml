@@ -136,6 +136,44 @@
             font-size: 1rem;
         }
 
+        .patient-history-trigger {
+            border: none;
+            background: transparent;
+            padding: 0;
+            text-align: left;
+            color: inherit;
+        }
+
+            .patient-history-trigger:hover .patient-name {
+                color: var(--primary-color);
+                text-decoration: underline;
+            }
+
+        .history-meta-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.75rem;
+            height: 100%;
+        }
+
+        .history-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.9rem;
+            background: #fff;
+        }
+
+        .history-block-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+            font-weight: 700;
+        }
+
         .badge-cin {
             background: #dbeafe;
             color: #1e40af;
@@ -272,7 +310,12 @@
                                             <i class="fa-solid fa-user-injured"></i>
                                         </div>
                                         <div>
-                                            <div class="patient-name">@item.Nom @item.Prenom</div>
+                                            <button type="button"
+                                                    class="patient-history-trigger"
+                                                    data-patient-id="@item.IdPatient"
+                                                    data-patient-name="@($"{item.Nom} {item.Prenom}")">
+                                                <span class="patient-name">@item.Nom @item.Prenom</span>
+                                            </button>
                                             <small class="text-muted fw-bold">Réf: #@item.IdPatient</small>
                                         </div>
                                     </div>
@@ -341,3 +384,294 @@
         </nav>
     }
 </div>
+
+<div class="modal fade" id="patientHistoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fa-solid fa-notes-medical me-2 text-primary"></i>
+                    Historique du Patient
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="historyLoading" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <div class="mt-2 text-muted">Chargement de l'historique...</div>
+                </div>
+
+                <div id="historyError" class="alert alert-danger d-none mb-0"></div>
+
+                <div id="historyContent" class="d-none">
+                    <div class="row g-2 mb-3" id="historySummary"></div>
+
+                    <ul class="nav nav-tabs mb-3" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabResume" type="button" role="tab">Resume</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabNotes" type="button" role="tab">Notes</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabParameters" type="button" role="tab">Parametres</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabOrdonnances" type="button" role="tab">Ordonnances</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="tabResume" role="tabpanel">
+                            <div class="row g-3" id="resumeGrid"></div>
+                        </div>
+
+                        <div class="tab-pane fade" id="tabNotes" role="tabpanel">
+                            <div id="notesTimeline"></div>
+                        </div>
+
+                        <div class="tab-pane fade" id="tabParameters" role="tabpanel">
+                            <div id="parametersTimeline"></div>
+                        </div>
+
+                        <div class="tab-pane fade" id="tabOrdonnances" role="tabpanel">
+                            <div id="ordonnancesTimeline"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+            const modalElement = document.getElementById('patientHistoryModal');
+            const modal = new bootstrap.Modal(modalElement);
+            const loadingEl = document.getElementById('historyLoading');
+            const errorEl = document.getElementById('historyError');
+            const contentEl = document.getElementById('historyContent');
+            const summaryEl = document.getElementById('historySummary');
+            const resumeEl = document.getElementById('resumeGrid');
+            const notesEl = document.getElementById('notesTimeline');
+            const parametersEl = document.getElementById('parametersTimeline');
+            const ordonnancesEl = document.getElementById('ordonnancesTimeline');
+
+            function safeText(value) {
+                return value ? String(value) : '-';
+            }
+
+            function formatDateTime(value) {
+                if (!value) return '-';
+                const d = new Date(value);
+                if (Number.isNaN(d.getTime())) return '-';
+                return d.toLocaleString('fr-FR');
+            }
+
+            function formatDate(value) {
+                if (!value) return '-';
+                const d = new Date(value);
+                if (Number.isNaN(d.getTime())) return '-';
+                return d.toLocaleDateString('fr-FR');
+            }
+
+            function calculateAge(value) {
+                if (!value) return '-';
+                const birth = new Date(value);
+                if (Number.isNaN(birth.getTime())) return '-';
+
+                const now = new Date();
+                let age = now.getFullYear() - birth.getFullYear();
+                const monthDiff = now.getMonth() - birth.getMonth();
+                if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
+                    age--;
+                }
+                return age >= 0 ? age + ' ans' : '-';
+            }
+
+            function renderSummary(data) {
+                const p = data.patient || {};
+                const s = data.summary || {};
+                const summaryItems = [
+                    { label: 'Patient', value: `${safeText(p.nom)} ${safeText(p.prenom)}`.trim() },
+                    { label: 'CIN', value: safeText(p.cin) },
+                    { label: 'Telephone', value: safeText(p.phone) },
+                    { label: 'Email', value: safeText(p.email) },
+                    { label: 'Age', value: calculateAge(p.dateNaiss) },
+                    { label: 'Derniere consultation', value: formatDateTime(s.lastConsultationDate) },
+                    { label: 'Nb consultations', value: safeText(s.totalConsultations) },
+                    { label: 'Nb ordonnances', value: safeText(s.totalOrdonnances) }
+                ];
+
+                summaryEl.innerHTML = summaryItems.map(i => `
+                    <div class="col-md-3 col-sm-6">
+                        <div class="history-meta-item">
+                            <div class="text-muted small">${i.label}</div>
+                            <div class="fw-bold">${i.value}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                resumeEl.innerHTML = `
+                    <div class="col-md-6">
+                        <div class="history-meta-item">
+                            <div class="history-block-title">Diagnostic recent</div>
+                            <div>${safeText(s.lastDiagnosis)}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="history-meta-item">
+                            <div class="history-block-title">Adresse</div>
+                            <div>${safeText(p.adresse)}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function renderNotes(consultations) {
+                if (!consultations || consultations.length === 0) {
+                    notesEl.innerHTML = '<div class="text-muted">Aucune note medicale.</div>';
+                    return;
+                }
+
+                notesEl.innerHTML = consultations.map(c => `
+                    <div class="history-card">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <div class="fw-bold">${formatDateTime(c.dateConsultation)}</div>
+                                <div class="text-muted small">${safeText(c.service)} | Etat: ${safeText(c.etat)}</div>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-2">
+                            <div class="col-md-4">
+                                <div class="history-meta-item">
+                                    <div class="history-block-title">Signes</div>
+                                    <div>${safeText(c.signe)}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="history-meta-item">
+                                    <div class="history-block-title">Diagnostic</div>
+                                    <div>${safeText(c.diagnostique)}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="history-meta-item">
+                                    <div class="history-block-title">Conduite</div>
+                                    <div>${safeText(c.conduite)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            function renderParameters(consultations) {
+                if (!consultations || consultations.length === 0) {
+                    parametersEl.innerHTML = '<div class="text-muted">Aucun parametre clinique.</div>';
+                    return;
+                }
+
+                parametersEl.innerHTML = consultations.map(c => `
+                    <div class="history-card">
+                        <div class="fw-bold mb-2">${formatDateTime(c.dateConsultation)} - ${safeText(c.service)}</div>
+                        <div class="row g-2">
+                            <div class="col-md-3"><div class="history-meta-item"><div class="history-block-title">Tension</div><div>${safeText(c.tTension)}</div></div></div>
+                            <div class="col-md-3"><div class="history-meta-item"><div class="history-block-title">Glycemie</div><div>${safeText(c.tGly)}</div></div></div>
+                            <div class="col-md-3"><div class="history-meta-item"><div class="history-block-title">Poids</div><div>${safeText(c.tPoid)}</div></div></div>
+                            <div class="col-md-3"><div class="history-meta-item"><div class="history-block-title">Taille</div><div>${safeText(c.tTaille)}</div></div></div>
+                            <div class="col-md-3"><div class="history-meta-item"><div class="history-block-title">SpO2</div><div>${safeText(c.tSpo)}</div></div></div>
+                            <div class="col-md-3"><div class="history-meta-item"><div class="history-block-title">IMC</div><div>${safeText(c.tImc)}</div></div></div>
+                            <div class="col-md-3"><div class="history-meta-item"><div class="history-block-title">Temperature</div><div>${safeText(c.tTemp)}</div></div></div>
+                            <div class="col-md-3"><div class="history-meta-item"><div class="history-block-title">FVC</div><div>${safeText(c.tFvc)}</div></div></div>
+                            <div class="col-md-3"><div class="history-meta-item"><div class="history-block-title">FEV</div><div>${safeText(c.tFev)}</div></div></div>
+                            <div class="col-md-3"><div class="history-meta-item"><div class="history-block-title">LDL</div><div>${safeText(c.tLdl)}</div></div></div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            function renderOrdonnances(ordonnances) {
+                if (!ordonnances || ordonnances.length === 0) {
+                    ordonnancesEl.innerHTML = '<div class="text-muted">Aucune ordonnance.</div>';
+                    return;
+                }
+
+                ordonnancesEl.innerHTML = ordonnances.map(o => {
+                    const meds = (o.medicaments || []).map(m => `
+                        <li>
+                            <span class="fw-semibold">${safeText(m.medicationName)}</span>
+                            - ${safeText(m.dosage1)} ${safeText(m.uniteDosage1)}
+                            - Quantite: ${safeText(m.quantite)}
+                        </li>
+                    `).join('');
+
+                    return `
+                        <div class="history-card">
+                            <div class="fw-bold mb-2">Ordonnance du ${formatDate(o.datePrescription)}</div>
+                            <ul class="mb-0">
+                                ${meds || '<li class="text-muted">Aucun medicament detaille.</li>'}
+                            </ul>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            async function loadHistory(patientId, patientName) {
+                modalElement.querySelector('.modal-title').innerHTML = `
+                    <i class="fa-solid fa-notes-medical me-2 text-primary"></i>
+                    Historique du Patient - ${safeText(patientName)}
+                `;
+
+                errorEl.classList.add('d-none');
+                contentEl.classList.add('d-none');
+                loadingEl.classList.remove('d-none');
+
+                try {
+                    const response = await fetch(`?handler=History&id=${patientId}`, {
+                        method: 'GET',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+
+                    if (!response.ok) {
+                        let message = 'Impossible de charger l\'historique.';
+                        try {
+                            const err = await response.json();
+                            if (err && err.message) {
+                                message = err.message;
+                                if (err.debug) {
+                                    message += ` (Debug: ${err.debug})`;
+                                }
+                            }
+                        } catch (_) { }
+                        throw new Error(message);
+                    }
+
+                    const data = await response.json();
+                    renderSummary(data);
+                    renderNotes(data.consultations);
+                    renderParameters(data.consultations);
+                    renderOrdonnances(data.ordonnances);
+
+                    loadingEl.classList.add('d-none');
+                    contentEl.classList.remove('d-none');
+                } catch (error) {
+                    loadingEl.classList.add('d-none');
+                    errorEl.textContent = error.message || 'Une erreur est survenue.';
+                    errorEl.classList.remove('d-none');
+                }
+            }
+
+            document.querySelectorAll('.patient-history-trigger').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const patientId = btn.getAttribute('data-patient-id');
+                    const patientName = btn.getAttribute('data-patient-name');
+                    modal.show();
+                    loadHistory(patientId, patientName);
+                });
+            });
+        })();
+    </script>
+}

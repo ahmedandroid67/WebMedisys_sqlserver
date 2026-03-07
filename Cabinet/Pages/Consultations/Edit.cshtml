@@ -2,6 +2,7 @@
 @model Cabinet.Pages.Consultations.EditModel
 @{
     ViewData["Title"] = "Modifier Consultation";
+    var canSeeRemarques = User.IsInRole("Medecin");
 }
 
 @section Styles {
@@ -127,24 +128,35 @@
                 <div class="card shadow-sm">
                     <div class="card-header">
                         <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#notes" type="button">Notes</button></li>
-                            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#vitals" type="button">Paramètres</button></li>
+                            @if (canSeeRemarques)
+                            {
+                                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#notes" type="button">Remarques</button></li>
+                            }
+                            <li class="nav-item"><button class="nav-link @(canSeeRemarques ? "" : "active")" data-bs-toggle="tab" data-bs-target="#vitals" type="button">Paramètres</button></li>
                             <li class="nav-item"><button class="nav-link text-danger fw-bold" data-bs-toggle="tab" data-bs-target="#ordTab" type="button">Ordonnance</button></li>
                         </ul>
                     </div>
                     <div class="card-body tab-content">
-                        <div class="tab-pane fade show active" id="notes">
-                            <textarea asp-for="Consultation.Signe" class="form-control mb-2" rows="3" placeholder="Signes..."></textarea>
-                            <textarea asp-for="Consultation.Diagnostique" class="form-control mb-2" rows="3" placeholder="Diagnostic..."></textarea>
-                            <textarea asp-for="Consultation.Conduite" class="form-control" rows="3" placeholder="Conduite..."></textarea>
-                        </div>
-                        <div class="tab-pane fade" id="vitals">
+                        @if (canSeeRemarques)
+                        {
+                            <div class="tab-pane fade show active" id="notes">
+                                <textarea asp-for="Consultation.Signe" class="form-control mb-2" rows="3" placeholder="Signes..."></textarea>
+                                <textarea asp-for="Consultation.Diagnostique" class="form-control mb-2" rows="3" placeholder="Diagnostic..."></textarea>
+                                <textarea asp-for="Consultation.Conduite" class="form-control" rows="3" placeholder="Conduite..."></textarea>
+                            </div>
+                        }
+                        <div class="tab-pane fade @(canSeeRemarques ? "" : "show active")" id="vitals">
                             <div class="row g-2">
                                 <div class="col-6"><input asp-for="Consultation.TTension" class="form-control" placeholder="Tension" /></div>
                                 <div class="col-6"><input asp-for="Consultation.TGly" class="form-control" placeholder="Glycémie" /></div>
                                 <div class="col-4"><input asp-for="Consultation.TPoid" id="poids" class="form-control" placeholder="Poids" /></div>
                                 <div class="col-4"><input asp-for="Consultation.TTaille" id="taille" class="form-control" placeholder="Taille" /></div>
                                 <div class="col-4"><input asp-for="Consultation.TImc" id="imc" class="form-control bg-light" readonly placeholder="IMC" /></div>
+                                <div class="col-4"><input asp-for="Consultation.TSpo" class="form-control" placeholder="SpO2" /></div>
+                                <div class="col-4"><input asp-for="Consultation.TTemp" class="form-control" placeholder="Température (°C)" /></div>
+                                <div class="col-4"><input asp-for="Consultation.TFvc" class="form-control" placeholder="FVC" /></div>
+                                <div class="col-4"><input asp-for="Consultation.TFev" class="form-control" placeholder="FEV" /></div>
+                                <div class="col-4"><input asp-for="Consultation.TLdl" class="form-control" placeholder="LDL" /></div>
                             </div>
                         </div>
                         <div class="tab-pane fade" id="ordTab">
@@ -208,6 +220,11 @@
                     $('#poids').val(data.history.tPoid);
                     $('#taille').val(data.history.tTaille);
                     $('#imc').val(data.history.tImc);
+                    $('#Consultation_TSpo').val(data.history.tSpo);
+                    $('#Consultation_TTemp').val(data.history.tTemp);
+                    $('#Consultation_TFvc').val(data.history.tFvc);
+                    $('#Consultation_TFev').val(data.history.tFev);
+                    $('#Consultation_TLdl').val(data.history.tLdl);
 
                     // Clear and Fill Ordonnance
                     $('#ordTable tbody').empty();

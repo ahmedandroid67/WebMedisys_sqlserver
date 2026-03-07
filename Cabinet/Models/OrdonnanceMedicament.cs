@@ -13,7 +13,7 @@ namespace Cabinet.Models
 
         [Column("MedicamentID")]
         [StringLength(17)]
-        public string MedicamentID { get; set; } = null!; // initialized to avoid warning
+        public string? MedicamentID { get; set; }
 
         [Column("quantite")]
         [StringLength(255)]

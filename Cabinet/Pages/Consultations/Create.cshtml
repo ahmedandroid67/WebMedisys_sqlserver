@@ -2,6 +2,7 @@
 @model Cabinet.Pages.Consultations.CreateModel
 @{
     ViewData["Title"] = "Nouvelle Consultation";
+    var canSeeRemarques = User.IsInRole("Medecin");
 }
 
 @section Styles {
@@ -78,31 +79,37 @@
                 <div class="card shadow">
                     <div class="card-header bg-light">
                         <ul class="nav nav-tabs card-header-tabs" id="medicalTabs" role="tablist">
+                            @if (canSeeRemarques)
+                            {
+                                <li class="nav-item">
+                                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#remarques" type="button">Remarques</button>
+                                </li>
+                            }
                             <li class="nav-item">
-                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#remarques" type="button">Remarques</button>
-                            </li>
-                            <li class="nav-item">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#parametres" type="button">Paramètres Vitaux</button>
+                                <button class="nav-link @(canSeeRemarques ? "" : "active")" data-bs-toggle="tab" data-bs-target="#parametres" type="button">Paramètres Vitaux</button>
                             </li>
                         </ul>
                     </div>
                     <div class="card-body tab-content">
-                        <div class="tab-pane fade show active" id="remarques">
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Signes Cliniques</label>
-                                <textarea asp-for="Consultation.Signe" class="form-control" rows="3" placeholder="Symptômes constatés..."></textarea>
+                        @if (canSeeRemarques)
+                        {
+                            <div class="tab-pane fade show active" id="remarques">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Signes Cliniques</label>
+                                    <textarea asp-for="Consultation.Signe" class="form-control" rows="3" placeholder="Symptômes constatés..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Diagnostic</label>
+                                    <textarea asp-for="Consultation.Diagnostique" class="form-control" rows="3" placeholder="Diagnostic médical..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Conduite à tenir</label>
+                                    <textarea asp-for="Consultation.Conduite" class="form-control" rows="3" placeholder="Instructions ou conseils..."></textarea>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Diagnostic</label>
-                                <textarea asp-for="Consultation.Diagnostique" class="form-control" rows="3" placeholder="Diagnostic médical..."></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Conduite à tenir</label>
-                                <textarea asp-for="Consultation.Conduite" class="form-control" rows="3" placeholder="Instructions ou conseils..."></textarea>
-                            </div>
-                        </div>
+                        }
 
-                        <div class="tab-pane fade" id="parametres">
+                        <div class="tab-pane fade @(canSeeRemarques ? "" : "show active")" id="parametres">
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <label class="form-label">Tension</label>
@@ -127,6 +134,22 @@
                                 <div class="col-md-4">
                                     <label class="form-label fw-bold text-danger">IMC</label>
                                     <input asp-for="Consultation.TImc" id="imc" class="form-control bg-light" readonly />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">SpO2</label>
+                                    <input asp-for="Consultation.TSpo" class="form-control" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">FVC</label>
+                                    <input asp-for="Consultation.TFvc" class="form-control" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">FEV</label>
+                                    <input asp-for="Consultation.TFev" class="form-control" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">LDL</label>
+                                    <input asp-for="Consultation.TLdl" class="form-control" />
                                 </div>
                             </div>
                         </div>
