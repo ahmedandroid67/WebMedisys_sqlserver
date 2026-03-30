@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model Cabinet.Pages.Stock.IndexModel
 @{
     ViewData["Title"] = "Gestion du Stock";
@@ -22,6 +22,20 @@
             margin-bottom: 2rem;
             box-shadow: var(--shadow-md);
             border: 1px solid rgba(79, 70, 229, 0.1);
+        }
+
+        .page-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .header-icon-wrapper {
@@ -189,7 +203,7 @@
 
 <div class="container-fluid px-4">
     <div class="page-header mt-3">
-        <div class="page-header-content d-flex justify-content-between align-items-center">
+        <div class="page-header-content">
             <div class="d-flex align-items-center">
                 <div class="header-icon-wrapper">
                     <i class="fa-solid fa-boxes-stacked"></i>
@@ -199,7 +213,7 @@
                     <p class="text-muted small mb-0" style="font-size: 0.95rem;">Matériels, outils et consommables du cabinet</p>
                 </div>
             </div>
-            <div class="d-flex gap-2">
+            <div class="header-actions">
                 <button type="button" class="btn btn-outline-secondary rounded-pill px-4 fw-bold" style="border: 2px solid #e2e8f0;" data-bs-toggle="modal" data-bs-target="#modalCategories">
                     <i class="fa-solid fa-tags me-2"></i>Catégories
                 </button>

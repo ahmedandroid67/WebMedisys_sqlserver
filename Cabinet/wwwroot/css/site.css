@@ -413,3 +413,70 @@ body {
     #ordTable input {
         color: var(--input-text);
     }
+
+
+/* ============================================
+   PAGE HEADER — MOBILE COMPACT (Global)
+   ============================================ */
+@media (max-width: 575px) {
+
+    /* Shrink overall header padding */
+    .page-header {
+        padding: 0.85rem 1rem !important;
+        border-radius: 14px !important;
+        margin-bottom: 1rem !important;
+    }
+
+    /* Keep title row and buttons on ONE row, wrapping only if truly needed */
+    .page-header .page-header-content,
+    .page-header > div:first-child {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    /* Smaller icon box */
+    .header-icon-wrapper {
+        width: 42px !important;
+        height: 42px !important;
+        min-width: 42px;
+        border-radius: 11px !important;
+        margin-right: 0.75rem !important;
+        box-shadow: none !important;
+    }
+
+    .header-icon-wrapper i {
+        font-size: 1.15rem !important;
+    }
+
+    /* Compact title text */
+    .page-header h1,
+    .page-header .page-title {
+        font-size: 1rem !important;
+        margin-bottom: 0 !important;
+        line-height: 1.2;
+    }
+
+    /* Hide subtitle text on very small screens to save space */
+    .page-header .page-subtitle,
+    .page-header p.small,
+    .page-header p.text-muted {
+        display: none !important;
+    }
+
+    /* Action buttons: wrap into a tidy row, never overflow */
+    .page-header .header-actions,
+    .page-header .d-flex.gap-2 {
+        flex-wrap: wrap;
+        gap: 0.35rem !important;
+    }
+
+    .page-header .btn {
+        font-size: 0.78rem !important;
+        padding: 0.35rem 0.75rem !important;
+        border-radius: 8px !important;
+    }
+}
