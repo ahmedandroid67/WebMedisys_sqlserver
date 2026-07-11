@@ -36,6 +36,8 @@ namespace Cabinet.Pages.Employers
             return Page();
         }
 
+        private static readonly string[] AllowedRoles = { "Admin", "Medecin", "Secretaire" };
+
         // 2. POST: Saves the changes
         public async Task<IActionResult> OnPostAsync()
         {
@@ -53,6 +55,12 @@ namespace Cabinet.Pages.Employers
 
             if (!ModelState.IsValid)
             {
+                return Page();
+            }
+
+            if (!AllowedRoles.Contains(Employer.Role))
+            {
+                ModelState.AddModelError("Employer.Role", "Rôle invalide. Choisissez parmi : Admin, Medecin, Secretaire.");
                 return Page();
             }
 

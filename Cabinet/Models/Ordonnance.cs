@@ -21,5 +21,12 @@ namespace Cabinet.Models
         // FIXED: Date Object
         [Column("DatePrescription")]
         public DateTime DatePrescription { get; set; }
+
+        // Links ordonnance directly to a consultation (replaces unreliable date-based matching)
+        [Column("ConsultationID")]
+        public int? ConsultationId { get; set; }
+
+        [ForeignKey("ConsultationId")]
+        public virtual Consultation? Consultation { get; set; }
     }
 }

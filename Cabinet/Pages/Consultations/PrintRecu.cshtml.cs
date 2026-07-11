@@ -19,7 +19,7 @@ namespace Cabinet.Pages.Consultations
         public CabinetInfo Cabinet { get; set; } = default!;
         public string ReceiptNumber { get; set; } = string.Empty;
 
-        public async Task<IActionResult> OnGetAsync(int id)
+        public async Task<IActionResult> OnPostAsync(int id)
         {
             // Load consultation with patient data
             var consultation = await _context.Consultation

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Cabinet.Data;
@@ -97,6 +98,13 @@ namespace Cabinet.Pages.Stock
 
         public async Task<IActionResult> OnPostDeleteProductAsync(int id)
         {
+            var hasMovements = await _context.StockMovements.AnyAsync(m => m.StockId == id);
+            if (hasMovements)
+            {
+                TempData["ErrorMessage"] = "Impossible de supprimer : ce produit a un historique de mouvements. Supprimez d'abord les mouvements.";
+                return RedirectToPage();
+            }
+
             var product = await _context.Stocks.FindAsync(id);
             if (product != null)
             {
@@ -124,15 +132,57 @@ namespace Cabinet.Pages.Stock
             return RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostRecordMovementAsync(int MoveStockId, int MoveQty, string MoveType, string MoveMotif, DateTime MoveDate, int MoveEmployerId)
+        public async Task<IActionResult> OnPostRecordMovementAsync(int MoveStockId, int MoveQty, string MoveType, string MoveMotif, DateTime MoveDate)
         {
-            var product = await _context.Stocks.FindAsync(MoveStockId);
-            if (product == null) return RedirectToPage();
-
-            if (MoveType == "Sortie" && MoveQty > product.Quantite)
+            if (MoveType != "Entrée" && MoveType != "Sortie")
             {
-                TempData["ErrorMessage"] = $"Erreur: Vous essayez de sortir {MoveQty} unités, mais il n'en reste que {product.Quantite} en stock.";
+                TempData["ErrorMessage"] = "Type de mouvement invalide. Utilisez 'Entrée' ou 'Sortie'.";
                 return RedirectToPage();
+            }
+
+            if (MoveQty <= 0)
+            {
+                TempData["ErrorMessage"] = "La quantité doit être un nombre positif.";
+                return RedirectToPage();
+            }
+
+            var employerIdClaim = User.FindFirstValue("EmployerId");
+            if (string.IsNullOrEmpty(employerIdClaim) || !int.TryParse(employerIdClaim, out var employerId))
+            {
+                TempData["ErrorMessage"] = "Impossible d'identifier l'employé connecté.";
+                return RedirectToPage();
+            }
+
+            var product = await _context.Stocks.FindAsync(MoveStockId);
+            if (product == null)
+            {
+                TempData["ErrorMessage"] = "Produit introuvable.";
+                return RedirectToPage();
+            }
+
+            // Atomic stock update with overflow guard
+            if (MoveType == "Sortie")
+            {
+                var rows = await _context.Database.ExecuteSqlRawAsync(
+                    "UPDATE stock SET quantite = quantite - {0}, updated_at = GETUTCDATE() WHERE id_produit = {1} AND quantite >= {0}",
+                    MoveQty, MoveStockId);
+
+                if (rows == 0)
+                {
+                    var currentQty = await _context.Stocks.AsNoTracking()
+                        .Where(s => s.Id == MoveStockId)
+                        .Select(s => s.Quantite)
+                        .FirstOrDefaultAsync();
+
+                    TempData["ErrorMessage"] = $"Erreur: Vous essayez de sortir {MoveQty} unités, mais il n'en reste que {currentQty} en stock.";
+                    return RedirectToPage();
+                }
+            }
+            else
+            {
+                await _context.Database.ExecuteSqlRawAsync(
+                    "UPDATE stock SET quantite = quantite + {0}, updated_at = GETUTCDATE() WHERE id_produit = {1}",
+                    MoveQty, MoveStockId);
             }
 
             var movement = new StockMovement
@@ -142,10 +192,8 @@ namespace Cabinet.Pages.Stock
                 Type = MoveType,
                 Motif = MoveMotif,
                 DateMouvement = MoveDate,
-                EmployerId = MoveEmployerId
+                EmployerId = employerId
             };
-
-            product.Quantite += movement.Quantite;
 
             _context.StockMovements.Add(movement);
             await _context.SaveChangesAsync();

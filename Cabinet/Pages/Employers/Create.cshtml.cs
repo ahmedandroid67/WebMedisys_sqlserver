@@ -26,10 +26,18 @@ namespace Cabinet.Pages.Employers
         [BindProperty]
         public Employer Employer { get; set; } = default!;
 
+        private static readonly string[] AllowedRoles = { "Admin", "Medecin", "Secretaire" };
+
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
+                return Page();
+            }
+
+            if (!AllowedRoles.Contains(Employer.Role))
+            {
+                ModelState.AddModelError("Employer.Role", "Rôle invalide. Choisissez parmi : Admin, Medecin, Secretaire.");
                 return Page();
             }
 

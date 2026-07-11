@@ -48,6 +48,18 @@ namespace Cabinet.Data
 
             modelBuilder.Entity<StockMovement>()
                 .HasIndex(m => m.EmployerId);
+
+            modelBuilder.Entity<Ordonnance>()
+                .HasOne(o => o.Consultation)
+                .WithMany()
+                .HasForeignKey(o => o.ConsultationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Ordonnance>()
+                .HasIndex(o => o.ConsultationId);
+
+            modelBuilder.Entity<Ordonnance>()
+                .HasIndex(o => new { o.PatientID, o.DatePrescription });
         }
 
         public override int SaveChanges()

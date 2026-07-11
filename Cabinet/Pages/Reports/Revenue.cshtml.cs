@@ -311,69 +311,67 @@ namespace Cabinet.Pages.Reports
         {
             CabinetInfo = await _context.CabinetInfo.AsNoTracking().FirstOrDefaultAsync();
 
-            // Calculate date range based on period
             var (start, end) = GetDateRange();
             StartDate = start;
             EndDate = end;
 
-            // Get consultations in date range
-            var consultations = await _context.Consultation
+            var baseQuery = _context.Consultation
                 .AsNoTracking()
-                .Include(c => c.Patient)
-                .Include(c => c.ServiceEntity)
-                .Where(c => c.DateConsultation.HasValue 
-                    && c.DateConsultation.Value.Date >= start.Date 
-                    && c.DateConsultation.Value.Date <= end.Date)
-                .OrderByDescending(c => c.DateConsultation)
-                .ToListAsync();
+                .Where(c => c.DateConsultation.HasValue
+                    && c.DateConsultation.Value.Date >= start.Date
+                    && c.DateConsultation.Value.Date <= end.Date);
 
-            DetailedConsultations = consultations;
+            // KPI aggregations in a single server-side query
+            var kpi = await baseQuery
+                .GroupBy(c => 1)
+                .Select(g => new
+                {
+                    Total = g.Sum(c => c.PrixConsul ?? 0),
+                    Discounts = g.Sum(c => c.Remise ?? 0),
+                    Count = g.Count()
+                })
+                .FirstOrDefaultAsync();
 
-            // Calculate statistics
-            TotalConsultations = consultations.Count;
-            TotalRevenue = consultations.Sum(c => c.PrixConsul ?? 0);
-            TotalDiscounts = consultations.Sum(c => c.Remise ?? 0);
+            TotalConsultations = kpi?.Count ?? 0;
+            TotalRevenue = kpi?.Total ?? 0;
+            TotalDiscounts = kpi?.Discounts ?? 0;
             NetRevenue = TotalRevenue - TotalDiscounts;
             AverageConsultation = TotalConsultations > 0 ? NetRevenue / TotalConsultations : 0;
 
-            // Payment methods breakdown
-            PaymentMethodsBreakdown = consultations
+            // Payment methods breakdown (server-side)
+            PaymentMethodsBreakdown = await baseQuery
                 .Where(c => !string.IsNullOrEmpty(c.PaymentMethod))
                 .GroupBy(c => c.PaymentMethod!)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.Sum(c => (c.PrixConsul ?? 0) - (c.Remise ?? 0))
-                );
+                .Select(g => new { Method = g.Key, Total = g.Sum(c => (c.PrixConsul ?? 0) - (c.Remise ?? 0)) })
+                .ToDictionaryAsync(g => g.Method, g => g.Total);
 
-            // Add "Non spécifié" for consultations without payment method
-            var unspecifiedAmount = consultations
+            var unspecifiedAmount = await baseQuery
                 .Where(c => string.IsNullOrEmpty(c.PaymentMethod))
-                .Sum(c => (c.PrixConsul ?? 0) - (c.Remise ?? 0));
-            
+                .SumAsync(c => (c.PrixConsul ?? 0) - (c.Remise ?? 0));
+
             if (unspecifiedAmount > 0)
             {
                 PaymentMethodsBreakdown["Non spécifié"] = unspecifiedAmount;
             }
 
-            // Services breakdown
-            ServicesBreakdown = consultations
-                .Where(c => c.ServiceId.HasValue || !string.IsNullOrEmpty(c.Service))
-                .GroupBy(c => new
-                {
-                    c.ServiceId,
-                    Name = c.ServiceEntity != null ? c.ServiceEntity.NomService : c.Service
-                })
+            // Services breakdown (server-side)
+            ServicesBreakdown = await baseQuery
+                .Join(_context.Service.AsNoTracking(),
+                    c => c.ServiceId,
+                    s => s.IdService,
+                    (c, s) => new { c.PrixConsul, c.Remise, ServiceName = s.NomService })
+                .GroupBy(x => x.ServiceName)
                 .Select(g => new ServiceRevenueDto
                 {
-                    ServiceName = g.Key.Name ?? "Inconnu",
+                    ServiceName = g.Key,
                     Count = g.Count(),
-                    TotalRevenue = g.Sum(c => (c.PrixConsul ?? 0) - (c.Remise ?? 0))
+                    TotalRevenue = g.Sum(x => (x.PrixConsul ?? 0) - (x.Remise ?? 0))
                 })
                 .OrderByDescending(s => s.TotalRevenue)
-                .ToList();
+                .ToListAsync();
 
-            // Daily revenue for charts
-            DailyRevenue = consultations
+            // Daily revenue (server-side)
+            DailyRevenue = await baseQuery
                 .GroupBy(c => c.DateConsultation!.Value.Date)
                 .Select(g => new DailyRevenueDto
                 {
@@ -382,7 +380,15 @@ namespace Cabinet.Pages.Reports
                     ConsultationCount = g.Count()
                 })
                 .OrderBy(d => d.Date)
-                .ToList();
+                .ToListAsync();
+
+            // Detailed list — paginated at 200 max
+            DetailedConsultations = await baseQuery
+                .Include(c => c.Patient)
+                .Include(c => c.ServiceEntity)
+                .OrderByDescending(c => c.DateConsultation)
+                .Take(200)
+                .ToListAsync();
         }
 
         private (DateTime start, DateTime end) GetDateRange()

@@ -39,7 +39,20 @@ namespace Cabinet.Pages.Patients
                 return Page();
             }
 
-            _context.Attach(Patient).State = EntityState.Modified;
+            var existing = await _context.Patient.FirstOrDefaultAsync(p => p.IdPatient == Patient.IdPatient);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+
+            existing.Nom = Patient.Nom;
+            existing.Prenom = Patient.Prenom;
+            existing.Cin = Patient.Cin;
+            existing.Email = Patient.Email;
+            existing.Phone = Patient.Phone;
+            existing.DateNaiss = Patient.DateNaiss;
+            existing.Sexe = Patient.Sexe;
+            existing.Adresse = Patient.Adresse;
 
             try
             {
@@ -51,10 +64,7 @@ namespace Cabinet.Pages.Patients
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return RedirectToPage("./Index");

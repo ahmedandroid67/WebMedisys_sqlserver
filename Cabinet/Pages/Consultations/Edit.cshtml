@@ -65,9 +65,11 @@
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" asp-page="./PrintRecu" asp-route-id="@Model.Consultation.IdConsultation" target="_blank">
-                                <i class="bi bi-receipt text-success"></i> Reçu de Paiement
-                            </a>
+                            <form method="post" asp-page="./PrintRecu" asp-route-id="@Model.Consultation.IdConsultation" target="_blank" style="display:inline;">
+                                <button type="submit" class="dropdown-item" style="background:none; border:none; width:100%; text-align:left;">
+                                    <i class="bi bi-receipt text-success"></i> Reçu de Paiement
+                                </button>
+                            </form>
                         </li>
                     </ul>
                 </div>
@@ -162,7 +164,7 @@
                         <div class="tab-pane fade" id="ordTab">
                             <div class="row g-2 mb-2">
                                 <div class="col-md-7">
-                                    <select id="medSelect" asp-items="Model.MedicamentList" class="form-select select2-med">
+                                    <select id="medSelect" class="form-select select2-med" style="width:100%">
                                         <option value="">-- Médicament --</option>
                                     </select>
                                 </div>
@@ -200,7 +202,18 @@
     <script>
         $(document).ready(function() {
             const servicePrices = @Html.Raw(Model.ServicePricesJson);
-            $('.select2-med').select2({ theme: 'bootstrap-5', width: '100%' });
+            $('.select2-med').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                ajax: {
+                    url: '?handler=SearchMedicaments',
+                    dataType: 'json',
+                    delay: 300,
+                    data: function(params) { return { term: params.term }; },
+                    processResults: function(data) { return { results: data.results }; }
+                },
+                minimumInputLength: 1
+            });
 
             // History Loading AJAX
             $('.history-row').click(function() {

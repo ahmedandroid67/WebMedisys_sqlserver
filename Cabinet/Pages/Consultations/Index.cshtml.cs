@@ -99,18 +99,13 @@ namespace Cabinet.Pages.Consultations
             var consultation = await _context.Consultation.FindAsync(id);
             if (consultation != null)
             {
-                if (consultation.PatientId.HasValue && consultation.DateConsultation.HasValue)
-                {
-                    var hasPrescription = await _context.Ordonnance.AnyAsync(o =>
-                        o.PatientID == consultation.PatientId.Value &&
-                        o.DatePrescription.Date == consultation.DateConsultation.Value.Date);
+                var hasPrescription = await _context.Ordonnance.AnyAsync(o => o.ConsultationId == id);
 
-                    if (hasPrescription)
-                    {
-                        TempData["ErrorMessage"] = "Suppression impossible: cette consultation possède une ordonnance associée. Utilisez \"Supprimer tout\" pour supprimer la consultation et son ordonnance ensemble.";
-                        TempData["BlockedId"] = id;
-                        return RedirectToPage("./Index");
-                    }
+                if (hasPrescription)
+                {
+                    TempData["ErrorMessage"] = "Suppression impossible: cette consultation possède une ordonnance associée. Utilisez \"Supprimer tout\" pour supprimer la consultation et son ordonnance ensemble.";
+                    TempData["BlockedId"] = id;
+                    return RedirectToPage("./Index");
                 }
 
                 _context.Consultation.Remove(consultation);
@@ -125,20 +120,15 @@ namespace Cabinet.Pages.Consultations
             var consultation = await _context.Consultation.FindAsync(id);
             if (consultation == null) return RedirectToPage("./Index");
 
-            if (consultation.PatientId.HasValue && consultation.DateConsultation.HasValue)
-            {
-                var ordonnance = await _context.Ordonnance
-                    .FirstOrDefaultAsync(o =>
-                        o.PatientID == consultation.PatientId.Value &&
-                        o.DatePrescription.Date == consultation.DateConsultation.Value.Date);
+            var ordonnance = await _context.Ordonnance
+                .FirstOrDefaultAsync(o => o.ConsultationId == id);
 
-                if (ordonnance != null)
-                {
-                    var medications = _context.OrdonnanceMedicament
-                        .Where(om => om.OrdonnanceID == ordonnance.OrdonnanceID);
-                    _context.OrdonnanceMedicament.RemoveRange(medications);
-                    _context.Ordonnance.Remove(ordonnance);
-                }
+            if (ordonnance != null)
+            {
+                var medications = _context.OrdonnanceMedicament
+                    .Where(om => om.OrdonnanceID == ordonnance.OrdonnanceID);
+                _context.OrdonnanceMedicament.RemoveRange(medications);
+                _context.Ordonnance.Remove(ordonnance);
             }
 
             _context.Consultation.Remove(consultation);

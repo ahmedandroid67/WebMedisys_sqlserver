@@ -27,7 +27,7 @@ namespace Cabinet.Pages.Consultations
             Cabinet = await _context.CabinetInfo.FirstOrDefaultAsync() ?? new CabinetInfo
             {
                 DrName = "Nom du Docteur",
-                Speciality = "Spécialité",
+                Speciality = "Spï¿½cialitï¿½",
                 Address = "Adresse"
             };
 
@@ -37,11 +37,11 @@ namespace Cabinet.Pages.Consultations
                 .FirstOrDefaultAsync(m => m.IdConsultation == id);
 
             if (Consultation == null) return NotFound();
+            if (!Consultation.DateConsultation.HasValue) return NotFound();
 
-            // 3. Fetch the Ordonnance linked to this consultation date and patient
+            // 3. Fetch the Ordonnance linked to this consultation
             var ord = await _context.Ordonnance
-                .FirstOrDefaultAsync(o => o.PatientID == Consultation.PatientId
-                                     && o.DatePrescription.Date == Consultation.DateConsultation.Value.Date);
+                .FirstOrDefaultAsync(o => o.ConsultationId == id);
 
             if (ord != null)
             {

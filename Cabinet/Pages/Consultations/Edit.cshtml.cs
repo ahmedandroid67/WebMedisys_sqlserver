@@ -45,6 +45,24 @@ namespace Cabinet.Pages.Consultations
             return Page();
         }
 
+        public async Task<JsonResult> OnGetSearchMedicamentsAsync(string term)
+        {
+            var query = _context.Medicament.AsNoTracking();
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                query = query.Where(m =>
+                    (m.Nom != null && m.Nom.Contains(term)) ||
+                    (m.Code != null && m.Code.Contains(term)) ||
+                    (m.Dci1 != null && m.Dci1.Contains(term)));
+            }
+            var results = await query
+                .OrderBy(m => m.Nom)
+                .Take(20)
+                .Select(m => new { id = m.Code, text = $"{m.Nom} {m.Dosage1}{m.UniteDosage1}" })
+                .ToListAsync();
+            return new JsonResult(new { results });
+        }
+
         public async Task<JsonResult> OnGetHistoryDetailsAsync(int id)
         {
             var history = await _context.Consultation
@@ -58,8 +76,7 @@ namespace Cabinet.Pages.Consultations
 
             var ord = await _context.Ordonnance
                 .AsNoTracking()
-                .FirstOrDefaultAsync(o => o.PatientID == history.PatientId
-                                     && o.DatePrescription.Date == history.DateConsultation!.Value.Date);
+                .FirstOrDefaultAsync(o => o.ConsultationId == id);
 
             var meds = ord != null
                 ? await (from om in _context.OrdonnanceMedicament.AsNoTracking()
@@ -132,13 +149,9 @@ namespace Cabinet.Pages.Consultations
             var medIds = Request.Form["medIds[]"].ToList();
             var posos = Request.Form["posos[]"].ToList();
 
-            Ordonnance? ord = null;
-            if (consultationToUpdate.PatientId.HasValue && consultationToUpdate.DateConsultation.HasValue)
-            {
-                ord = await _context.Ordonnance.FirstOrDefaultAsync(o =>
-                    o.PatientID == consultationToUpdate.PatientId.Value &&
-                    o.DatePrescription.Date == consultationToUpdate.DateConsultation.Value.Date);
-            }
+            var consultationId = consultationToUpdate.IdConsultation;
+            Ordonnance? ord = await _context.Ordonnance
+                .FirstOrDefaultAsync(o => o.ConsultationId == consultationId);
 
             if (medIds.Any())
             {
@@ -147,7 +160,8 @@ namespace Cabinet.Pages.Consultations
                     ord = new Ordonnance
                     {
                         PatientID = consultationToUpdate.PatientId ?? 0,
-                        DatePrescription = consultationToUpdate.DateConsultation ?? DateTime.Now
+                        DatePrescription = consultationToUpdate.DateConsultation ?? DateTime.Now,
+                        ConsultationId = consultationId
                     };
                     _context.Ordonnance.Add(ord);
                     await _context.SaveChangesAsync();
@@ -186,13 +200,6 @@ namespace Cabinet.Pages.Consultations
                     .ToListAsync();
             }
 
-            var meds = await _context.Medicament
-                .AsNoTracking()
-                .OrderBy(m => m.Nom)
-                .Select(m => new { m.Code, Display = $"{m.Nom} {m.Dosage1}{m.UniteDosage1}" })
-                .ToListAsync();
-            MedicamentList = new SelectList(meds, "Code", "Display");
-
             var services = await _context.Service
                 .AsNoTracking()
                 .OrderBy(s => s.NomService)
@@ -215,9 +222,15 @@ namespace Cabinet.Pages.Consultations
                 return;
             }
 
-            var ord = await _context.Ordonnance
-                .AsNoTracking()
-                .FirstOrDefaultAsync(o => o.PatientID == patientId.Value && o.DatePrescription.Date == date.Value.Date);
+            var consultationId = Request.RouteValues["id"] != null
+                ? int.Parse(Request.RouteValues["id"].ToString())
+                : (int?)null;
+
+            var ord = consultationId.HasValue
+                ? await _context.Ordonnance
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(o => o.ConsultationId == consultationId.Value)
+                : null;
 
             if (ord != null)
             {

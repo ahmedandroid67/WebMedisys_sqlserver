@@ -97,25 +97,32 @@ namespace Cabinet.Pages.Account
                 new Claim("FullName", $"{user.Nom} {user.Prenom}"),
                 new Claim(ClaimTypes.Role, user.Role),
                 // Controls Administration menu visibility
-                new Claim("CanAccessAdmin", user.CanAccessAdmin.ToString())
+                new Claim("CanAccessAdmin", user.CanAccessAdmin.ToString()),
+                // Used for stock movements and audit tracking
+                new Claim("EmployerId", user.IdEmployer.ToString())
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
             // 3. Sign in the user to create the encrypted cookie
+            var authProps = new AuthenticationProperties
+            {
+                IsPersistent = Input.RememberMe
+            };
+            if (Input.RememberMe)
+            {
+                authProps.ExpiresUtc = DateTimeOffset.UtcNow.AddDays(14);
+            }
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity),
-                new AuthenticationProperties
-                {
-                    IsPersistent = Input.RememberMe
-                });
+                authProps);
 
             return RedirectToPage("/Index");
         }
 
-        private static string FailedAttemptsKey(string email) => $"auth:failed:{email}";
-        private static string LockoutKey(string email) => $"auth:lock:{email}";
+        private string FailedAttemptsKey(string email) => $"auth:failed:{email}:{HttpContext.Connection.RemoteIpAddress}";
+        private string LockoutKey(string email) => $"auth:lock:{email}:{HttpContext.Connection.RemoteIpAddress}";
 
         private bool IsLockedOut(string email, out DateTime lockedUntilUtc)
         {

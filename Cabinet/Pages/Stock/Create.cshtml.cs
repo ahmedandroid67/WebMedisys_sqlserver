@@ -37,16 +37,21 @@ namespace Cabinet.Pages.Stock
 
             if (!ModelState.IsValid)
             {
-                // If there's an error, reload the categories and stay on the page
                 CategoryOptions = await _context.CategoryStocks.OrderBy(c => c.Nom).ToListAsync();
                 return Page();
             }
 
-            // Add the new product to the database
+            var catExists = await _context.CategoryStocks.AnyAsync(c => c.Id == NewStock.CategoryId);
+            if (!catExists)
+            {
+                ModelState.AddModelError("NewStock.CategoryId", "La catégorie sélectionnée n'existe pas.");
+                CategoryOptions = await _context.CategoryStocks.OrderBy(c => c.Nom).ToListAsync();
+                return Page();
+            }
+
             _context.Stocks.Add(NewStock);
             await _context.SaveChangesAsync();
 
-            // Redirect back to the stock list after success
             return RedirectToPage("./Index");
         }
     }

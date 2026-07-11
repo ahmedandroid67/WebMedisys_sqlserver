@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using Cabinet.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,7 +31,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy =>
-        policy.RequireRole("Admin", "Medecin"));
+        policy.RequireRole("Admin", "Medecin")
+              .RequireClaim("CanAccessAdmin", "True"));
 });
 
 // Configuration of the Cookie Authentication
@@ -41,11 +44,61 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         options.SlidingExpiration = true;
         options.Cookie.HttpOnly = true;
-        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.Name = "CabinetAuth";
+        options.Cookie.SameSite = SameSiteMode.Strict;
         // Bug 1 fix: Always in production, SameAsRequest in development (HTTP)
         options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
             ? CookieSecurePolicy.SameAsRequest
             : CookieSecurePolicy.Always;
+
+        options.Events = new CookieAuthenticationEvents
+        {
+            OnValidatePrincipal = async context =>
+            {
+                var email = context.Principal?.Identity?.Name;
+                if (string.IsNullOrEmpty(email))
+                {
+                    context.RejectPrincipal();
+                    return;
+                }
+
+                var scope = context.HttpContext.RequestServices.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                var user = await db.Employer
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(e => e.Email == email);
+                scope.Dispose();
+
+                if (user == null)
+                {
+                    context.RejectPrincipal();
+                    await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                    return;
+                }
+
+                var currentRole = context.Principal.FindFirstValue(ClaimTypes.Role);
+                var currentAdminClaim = context.Principal.FindFirstValue("CanAccessAdmin");
+                var currentEmployerId = context.Principal.FindFirstValue("EmployerId");
+
+                if (currentRole != user.Role
+                    || currentAdminClaim != user.CanAccessAdmin.ToString()
+                    || currentEmployerId != user.IdEmployer.ToString())
+                {
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, user.Email),
+                        new Claim("FullName", $"{user.Nom} {user.Prenom}"),
+                        new Claim(ClaimTypes.Role, user.Role),
+                        new Claim("CanAccessAdmin", user.CanAccessAdmin.ToString()),
+                        new Claim("EmployerId", user.IdEmployer.ToString())
+                    };
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    context.ReplacePrincipal(new ClaimsPrincipal(identity));
+                    context.ShouldRenew = true;
+                }
+            }
+        };
     });
 
 var app = builder.Build();
@@ -67,6 +120,16 @@ app.UseRequestLocalization(localizationOptions);
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// Security headers
+app.Use(async (ctx, next) =>
+{
+    ctx.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    ctx.Response.Headers["X-Frame-Options"] = "DENY";
+    ctx.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    ctx.Response.Headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
+    await next();
+});
 app.UseRouting();
 
 // Middleware order is critical

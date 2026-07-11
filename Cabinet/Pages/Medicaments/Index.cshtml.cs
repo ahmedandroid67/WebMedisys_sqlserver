@@ -42,8 +42,15 @@ namespace Cabinet.Pages.Medicaments
         {
             if (id == null) return NotFound();
 
-            var medicament = await _context.Medicament.FindAsync(id);
+            var codeStr = id.ToString();
+            var isReferenced = await _context.OrdonnanceMedicament.AnyAsync(om => om.MedicamentID == codeStr);
+            if (isReferenced)
+            {
+                TempData["ErrorMessage"] = "Impossible de supprimer : ce médicament est référencé dans des ordonnances.";
+                return RedirectToPage("./Index");
+            }
 
+            var medicament = await _context.Medicament.FindAsync(id);
             if (medicament != null)
             {
                 _context.Medicament.Remove(medicament);

@@ -418,44 +418,45 @@ body {
 /* ============================================
    PAGE HEADER — MOBILE COMPACT (Global)
    ============================================ */
-@media (max-width: 575px) {
+@media (max-width: 768px) {
 
     /* Shrink overall header padding */
     .page-header {
-        padding: 0.85rem 1rem !important;
+        padding: 1rem !important;
         border-radius: 14px !important;
         margin-bottom: 1rem !important;
     }
 
-    /* Keep title row and buttons on ONE row, wrapping only if truly needed */
+    /* Force column layout so buttons drop to next row */
     .page-header .page-header-content,
+    .page-header .page-header-content.d-flex,
     .page-header > div:first-child {
         display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        flex-wrap: wrap;
-        gap: 0.5rem;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        gap: 1rem !important;
     }
 
     /* Smaller icon box */
     .header-icon-wrapper {
-        width: 42px !important;
-        height: 42px !important;
-        min-width: 42px;
+        width: 50px !important;
+        height: 50px !important;
+        min-width: 50px;
         border-radius: 11px !important;
         margin-right: 0.75rem !important;
         box-shadow: none !important;
     }
 
     .header-icon-wrapper i {
-        font-size: 1.15rem !important;
+        font-size: 1.3rem !important;
     }
 
     /* Compact title text */
     .page-header h1,
-    .page-header .page-title {
-        font-size: 1rem !important;
+    .page-header .page-title,
+    .page-header h1.h3 {
+        font-size: 1.25rem !important;
         margin-bottom: 0 !important;
         line-height: 1.2;
     }
@@ -467,16 +468,27 @@ body {
         display: none !important;
     }
 
-    /* Action buttons: wrap into a tidy row, never overflow */
+    /* Action buttons drop down and stretch full width to prevent clipping */
     .page-header .header-actions,
+    .page-header .page-header-content > a.btn,
     .page-header .d-flex.gap-2 {
+        display: flex !important;
         flex-wrap: wrap;
-        gap: 0.35rem !important;
+        width: 100% !important;
+        justify-content: center !important;
+        gap: 0.5rem !important;
     }
 
-    .page-header .btn {
-        font-size: 0.78rem !important;
-        padding: 0.35rem 0.75rem !important;
-        border-radius: 8px !important;
+    .page-header .header-actions .btn,
+    .page-header .page-header-content > a.btn,
+    .page-header .d-flex.gap-2 .btn {
+        flex: 1 1 calc(50% - 0.5rem) !important;
+        text-align: center !important;
+        justify-content: center !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding: 0.5rem 0.5rem !important;
+        font-size: 0.85rem !important;
+        white-space: normal !important; /* allow text wrapping if needed */
     }
 }
